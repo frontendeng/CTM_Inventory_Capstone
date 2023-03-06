@@ -75,9 +75,9 @@
             <div class="container-fluid px-4">
 
                 <div class="row my-5">
-                    <h3 class="fs-4 mb-3">Equipment</h3>
+                    <h3 class="fs-4 mb-3">Create New Inventory Item</h3>
                     <div class="col">
-                        <a href="add.html" class="btn btn-success mb-3"> <i class="fa-solid fa-plus"></i> Add Equipment</a>
+                        
                         <table class="table bg-white rounded shadow-sm  table-hover">
                         <table class="table bg-white rounded shadow-sm  table-hover">
                             <thead>
@@ -94,16 +94,32 @@
                                     
                                 </tr>
                             </thead>
+                            
                             <tbody>
+                                
                                 <tr>
-                                    <th scope="row">1</th>
-                                    <td>Marquee</td>
+                                <form>
+                                    <th scope="row">
+                                        <input type="text" id="id" name="id">
+                                    </th>
                                     
-                                    <td>2</td>
-                                    <td>Not assigned</td>
-                                    <td>Saththiyan</td>
-                                    <td>Thaipongal, 2022</td>
+                                    <td>
+                                        <input type="text" id="item" name="item">
+                                    </td>
                                     
+                                    <td>
+                                        <input type="text" id="quantity" name="quantity">
+                                    </td>
+                                    <td>
+                                        <input type="text" id="assigned_to" name="assigned_to">
+                                    </td>
+                                    <td>
+                                        <input type="text" id="current_location" name="current_location">    
+                                    </td>
+                                    <td>
+                                        <input type="text" id="last_location" name="last_location">    
+                                    </td>
+                                </form>
                                     <td>
                                         <!-- view button -->
                                         <a href="" class="link-dark"><i class="fa-solid fa-eye fs-5 me-3" ></i></a>
@@ -115,116 +131,7 @@
                 
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td>Water spray</td>
-                                   
-                                    <td>1</td>
-                                    <td>Not assigned</td>
-                                    <td>Saththiyan</td>
-                                    <td>Thaipongal, 2022</td>
-                                    
-                                </tr>
-                                <tr>
-                                    <th scope="row">3</th>
-                                    <td>Printer</td>
-                                  
-                                    <td>1</td>
-                                    <td>Jenny</td>
-                                    <td>Thaipongal, 2023</td>
-                                    <td>Thaipongal, 2022</td>
-                                    
-                                </tr>
-                                <tr>
-                                    <th scope="row">4</th>
-                                    <td>File cover plastic</td>
-                                    
-                                    <td>1</td>
-                                    <td>Not assigned</td>
-                                    <td>Saththiyan</td>
-                                    <td>Aadi Pirappu</td>
-                                    
-                                </tr>
-                                <tr>
-                                    <th scope="row">5</th>
-                                    <td>Table cloth fabric</td>
-                                 
-                                    <td>1</td>
-                                    <td>Saththiyan</td>
-                                    <td>Aadi Pirappu 2023</td>
-                                    <td>Aadi Pirappu 2022</td>
-                                    
-                                </tr>
-                                <tr>
-                                    <th scope="row">6</th>
-                                    <td>Table cloth Plastic</td>
-                                  
-                                    <td>12</td>
-                                    <td>Saththiyan</td>
-                                    <td>Aadi Pirappu 2023</td>
-                                    <td>Aadi Pirappu 2022</td>
-                                  
-                                </tr>
-                                <tr>
-                                    <th scope="row">7</th>
-                                    <td>Bin Bags</td>
-                                    
-                                    <td>Few</td>
-                                    <td>Saththiyan</td>
-                                    <td>Aadi Pirappu 2023</td>
-                                    <td>Aadi Pirappu 2022</td>
-                                    
-                                </tr>
-                                <tr>
-                                    <th scope="row">8</th>
-                                    <td>Information form</td>
-                                    
-                                    <td>Few</td>
-                                    <td>Carl</td>
-                                    <td>Aadi Pirappu 2023</td>
-                                    <td>Aadi Pirappu 2022</td>
-                                    
-                                </tr>
-                                <tr>
-                                    <th scope="row">9</th>
-                                    <td>Pen</td>
-                           
-                                    <td>9</td>
-                                    <td>Saththiyan</td>
-                                    <td>Aadi Pirappu 2023</td>
-                                    <td>Aadi Pirappu 2022</td>
-                                  
-                                </tr>
-                                <tr>
-                                    <th scope="row">10</th>
-                                    <td>Illavanil</td>
-                                  
-                                    <td>Few</td>
-                                    <td>Saththiyan</td>
-                                    <td>Aadi Pirappu 2023</td>
-                                    <td>Aadi Pirappu 2022</td>
-                                 
-                                </tr>
-                                <tr>
-                                    <th scope="row">11</th>
-                                    <td>Candles</td>
-                                    
-                                    <td>5</td>
-                                    <td>Saththiyan</td>
-                                    <td>Aadi Pirappu 2023</td>
-                                    <td>Aadi Pirappu 2022</td>
-                                    
-                                </tr>
-                                <tr>
-                                    <th scope="row">12</th>
-                                    <td>Plates</td>
-                                    
-                                    <td>5</td>
-                                    <td>Saththiyan</td>
-                                    <td>Aadi Pirappu 2023</td>
-                                    <td>Aadi Pirappu 2022</td>
-                                 
-                                </tr>
+                                <a href="add.html" class="btn btn-success mb-3"> <i class="fa-solid fa-plus"></i> Submit</a>
                             </tbody>
                         </table>
                     </div>
