@@ -19,7 +19,7 @@ const pool = new Pool({
 app.get('/', async (req, res) => {
   // var invData = await getInvData();
   // ### Currently not displaying the data in the html page, believed to be an async issue as the page is being loaded before the data is fetched from bit.io
-  res.render('index.ejs', { data: await getInvData() })
+  res.render('index.ejs', { data: await getInvData() });
 });
 
 
@@ -30,9 +30,10 @@ app.listen(port, () => {
 async function getInvData(){
   var invData = [];
   // Select everything from inventory table
-  pool.query('SELECT * FROM "inventory";', (err, res) => {
-    invData = res.rows;
-    console.log(invData);
-  })
+  try{
+  invData =  (await pool.query('SELECT * FROM "inventory";' )).rows;}
+  catch(e){
+    throw e;
+  }
   return invData;
 }
