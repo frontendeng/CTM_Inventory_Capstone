@@ -22,6 +22,11 @@ app.get('/', async (req, res) => {
   res.render('index.ejs', { data: await getInvData() });
 });
 
+app.get('/view', async (req, res) => {
+
+  res.render('view.ejs', { data: await getItemData(req.query.id) });
+});
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
@@ -36,4 +41,16 @@ async function getInvData(){
     throw e;
   }
   return invData;
+}
+
+async function getItemData(id){
+  var itemData;
+  // Select everything from inventory table
+  try{
+    itemData =  (await pool.query(`SELECT * FROM "inventory" WHERE "itemid" = ${id};` )).rows;}
+  catch(e){
+    throw e;
+  }
+  console.log(itemData);
+  return itemData;
 }
