@@ -35,9 +35,15 @@
                     <td><%= data[i].possession %></td>
                     <td><%= data[i].condition %></td>
                     <td><%= data[i].qty %></td>
-                    <td><form method="get" action="/view"><input type="number" name="id" value="<%= data[i].itemid %>" hidden><input type = "submit"  Value = "View"></form></td>
+                    <td><form method="get" action="/view"
+                        ><input type="number" name="id" value="<%= data[i].itemid %>" hidden>
+                        <input type = "submit"  Value = "View">
+                    </form></td>
                     <td><a href="edit.ejs">Edit</a></td>
-                    <td><a href="delete.ejs">Delete</a></td>
+                    <td><form method="get" action="/delete">
+                        <input type="number" name="id" value="<%= data[i].itemid %>" hidden>
+                        <input type = "submit"  Value = "Delete">
+                    </form></td>
                 </tr>
             <% } %>
             

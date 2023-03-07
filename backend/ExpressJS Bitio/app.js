@@ -1,10 +1,13 @@
 const express = require('express');
 const { Pool } = require('pg');
 const app = express();
+const bp = require('body-parser'); 
 const port = 3000;
 
 // Set view engine to ejs
 app.set('view engine', 'ejs');
+app.use(bp.json())
+app.use(bp.urlencoded({ extended: true }))
 
 // Create a connection pool using the connection information provided on bit.io.
 const pool = new Pool({
@@ -25,6 +28,16 @@ app.get('/', async (req, res) => {
 app.get('/view', async (req, res) => {
 
   res.render('view.ejs', { data: await getItemData(req.query.id) });
+});
+
+app.get('/delete', async (req, res) => {
+
+  res.render('delete.ejs', { data: await getItemData(req.query.id) });
+});
+
+app.post('/delete_confirm', async (req, res) => {
+  await deleteItemData(req.body.id);
+  res.redirect('/');
 });
 
 
@@ -53,4 +66,14 @@ async function getItemData(id){
   }
   console.log(itemData);
   return itemData;
+}
+
+async function deleteItemData(id){
+  // Select everything from inventory table
+  console.log(id);
+  try{
+    await pool.query(`DELETE FROM "inventory" WHERE "itemid" = ${id}` );}
+  catch(e){
+    throw e;
+  }
 }
