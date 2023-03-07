@@ -35,6 +35,5 @@ async function getInvData(){
   catch(e){
     throw e;
   }
-  console.log(invData);
   return invData;
 }
