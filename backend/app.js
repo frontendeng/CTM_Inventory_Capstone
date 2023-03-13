@@ -13,10 +13,10 @@ app.use(bp.urlencoded({ extended: true }))
 
 // Create a connection pool using the connection information provided on bit.io.
 const pool = new Pool({
-  user: 'Matt-Bruce111', // Username, Leave as Matt-Bruce111 for now
+  user: '', // Username, Leave as Matt-Bruce111 for now
   host: 'db.bit.io', // Always db.bit.io
-  database: 'Matt-Bruce111/inv1', // public database 
-  password: 'v2_3zqF7_ptTKqKXWCFasAWNRcdeXPxU', // key from bit.io database page connect menu
+  database: '', // public database 
+  password: '', // key from bit.io database page connect menu
   port: 5432,
   ssl: true,
 });
