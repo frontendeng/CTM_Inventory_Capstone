@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>MY APP</title>
+    </head>
+    <body>
+        <h1> Inventory System Testing </h1>
+
+        <form action="/add" method="POST">
+            <input type="text" placeholder="itemdesc" name="itemdesc">
+            <input type="text" placeholder="category" name="category">
+            <input type="text" placeholder="possession" name="possession">
+            <input type="text" placeholder="condition" name="condition">
+            <input type="text" placeholder="qty" name="qty">
+            <button type="submit">Submit</button>
+        </form>
+
+        <h2> Quotes </h2>
+
+        <table>
+            <tr>
+              <th>Item</th>
+              <th>Category</th>
+              <th>Possession</th>
+              <th>Condition</th>
+              <th>Qty</th>
+            </tr>
+            
+            <!-- Dynamic component for each data row -->
+            <% for(var i = 0; i < data.length; i++) {%>
+                <tr>
+                    <td><%= data[i].itemdesc %></td>
+                    <td><%= data[i].category %></td>
+                    <td><%= data[i].possession %></td>
+                    <td><%= data[i].condition %></td>
+                    <td><%= data[i].qty %></td>
+                    <td><a href="view.ejs">View</a></td>
+                    <td><a href="edit.ejs">Edit</a></td>
+                    <td><a href="delete.ejs">Delete</a></td>
+                </tr>
+            <% } %>
+            
+        </table>
+    </body>
+</html>
