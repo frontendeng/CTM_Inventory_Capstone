@@ -6,6 +6,8 @@ const port = 3000;
 
 // Set view engine to ejs
 app.set('view engine', 'ejs');
+// This line is needed to load bootstrap correctly
+app.use(express.static("views"));
 app.use(bp.json())
 app.use(bp.urlencoded({ extended: true }))
 
@@ -22,7 +24,7 @@ const pool = new Pool({
 app.get('/', async (req, res) => {
   // var invData = await getInvData();
   // ### Currently not displaying the data in the html page, believed to be an async issue as the page is being loaded before the data is fetched from bit.io
-  res.render('index.ejs', { data: await getInvData() });
+  res.render('viewall.ejs', { data: await getInvData() });
 });
 
 app.get('/view', async (req, res) => {
