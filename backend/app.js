@@ -6,15 +6,17 @@ const port = 3000;
 
 // Set view engine to ejs
 app.set('view engine', 'ejs');
+// This line is needed to load bootstrap correctly
+app.use(express.static("views"));
 app.use(bp.json())
 app.use(bp.urlencoded({ extended: true }))
 
 // Create a connection pool using the connection information provided on bit.io.
 const pool = new Pool({
-  user: 'Matt-Bruce111', // Username, Leave as Matt-Bruce111 for now
+  user: '', // Username, Leave as Matt-Bruce111 for now
   host: 'db.bit.io', // Always db.bit.io
-  database: 'Matt-Bruce111/inv1', // public database 
-  password: 'v2_3zqF7_ptTKqKXWCFasAWNRcdeXPxU', // key from bit.io database page connect menu
+  database: '', // public database 
+  password: '', // key from bit.io database page connect menu
   port: 5432,
   ssl: true,
 });
@@ -22,7 +24,7 @@ const pool = new Pool({
 app.get('/', async (req, res) => {
   // var invData = await getInvData();
   // ### Currently not displaying the data in the html page, believed to be an async issue as the page is being loaded before the data is fetched from bit.io
-  res.render('index.ejs', { data: await getInvData() });
+  res.render('viewall.ejs', { data: await getInvData() });
 });
 
 app.get('/view', async (req, res) => {
