@@ -80,18 +80,18 @@
                         
                           
                         <form method="post" action="/edit_confirm">
-                            <input type="number" name="id" value="<%= data[0].itemid %>" hidden>
-                            <label for="itemDesc">Item:</label><br>
-                            <input type="text" id="itemDesc" name="itemDesc" value="<%= data[0].item_desc">
+                            <input type="number" name="id" value="<%= data[0].item_id %>" hidden>
+                            <label for="itemdesc">Item:</label><br>
+                            <input type="text" id="itemdesc" name="itemdesc" value="<%= data[0].item_desc%>">
                             <br>
                             <br>
 
                             <label for="qty">Quantity:</label><br>
-                            <input type="text" id="qty" name="qty"  value="<%= data[0].qty">
+                            <input type="text" id="qty" name="qty"  value="<%= data[0].qty%>">
                             <br><br>
 
                             <label for="possession">Assigned To:</label><br>
-                            <input type="text" id="possession" name="possession"  value="<%= data[0].possession">
+                            <input type="text" id="possession" name="possession"  value="<%= data[0].possession%>">
 
                             <!--
                             <br><br>
@@ -115,7 +115,7 @@
                             <br><br>
                             
                             <label for="category">Notes:</label><br>
-                            <textarea id="category" name="category" rows="4" cols="50"  value="<%= data[0].category">
+                            <textarea id="category" name="category" rows="4" cols="50"><%= data[0].category%>
                             </textarea>
                                 
                             

@@ -5,6 +5,7 @@ const bp = require('body-parser');
 const port = 3000;
 
 // Set view engine to ejs
+app.set('views', './backend/views');
 app.set('view engine', 'ejs');
 app.use(bp.json())
 app.use(bp.urlencoded({ extended: true }))
@@ -22,17 +23,18 @@ const pool = new Pool({
 app.get('/', async (req, res) => {
   // var invData = await getInvData();
   // ### Currently not displaying the data in the html page, believed to be an async issue as the page is being loaded before the data is fetched from bit.io
-  res.render('index.ejs', { data: await getInvData() });
+
+  res.render('index', { data: await getInvData() });
 });
 
 app.get('/view', async (req, res) => {
 
-  res.render('view.ejs', { data: await getItemData(req.query.id) });
+  res.render('view', { data: await getItemData(req.query.id) });
 });
 
 app.get('/delete', async (req, res) => {
 
-  res.render('delete.ejs', { data: await getItemData(req.query.id) });
+  res.render('delete', { data: await getItemData(req.query.id) });
 });
 
 app.post('/delete_confirm', async (req, res) => {
@@ -42,11 +44,12 @@ app.post('/delete_confirm', async (req, res) => {
 
 app.post('/edit_confirm', async (req, res) => {
   var body = req.body;
-  await editItemData(body.itemDesc. body.category, body.condition, body.possession, body.qty, body.id);
+  console.log(body);
+  await editItemData(body.id, body.itemdesc,/* body.condition,*/ body.qty, body.possession, body.category);
   res.redirect('/');
 });
 app.get('/edit', async (req, res) => {
-  res.render('edit.ejs', { data: await getItemData(req.query.id) });
+  res.render('edit', { data: await getItemData(req.query.id) });
 });
 
 app.listen(port, () => {
@@ -57,18 +60,18 @@ async function getInvData(){
   var invData = [];
   // Select everything from inventory table
   try{
-  invData =  (await pool.query('SELECT * FROM "inventory";' )).rows;}
+  invData =  (await pool.query('SELECT * FROM "ctm_inventory";' )).rows;}
   catch(e){
     throw e;
   }
   return invData;
 }
 
-async function editItemData(itemDesc, category, condition, possession, qty, id){
+async function editItemData(id, itemDesc, qty, possession, category){
   var invData = [];
   // Select everything from inventory table
   try{
-  invData =  (await pool.query(`UPDATE 'inventory' SET 'item_desc' = ${itemDesc}, 'category' = ${category}, 'condition' = ${condition}, 'possession' = ${possession}, 'qty' = ${qty} WHERE 'id' = ${id} ;` )).rows;}
+  invData =  (await pool.query(`UPDATE ctm_inventory SET item_desc = '${itemDesc}', category = '${category}',`/* 'condition' = ${condition},*/ +`possession = '${possession}', qty = ${qty} WHERE item_id = ${id} ;` )).rows;}
   catch(e){
     throw e;
   }
@@ -79,7 +82,7 @@ async function getItemData(id){
   var itemData;
   // Select everything from inventory table
   try{
-    itemData =  (await pool.query(`SELECT * FROM "inventory" WHERE "itemid" = ${id};` )).rows;}
+    itemData =  (await pool.query(`SELECT * FROM "ctm_inventory" WHERE item_id = ${id};` )).rows;}
   catch(e){
     throw e;
   }
@@ -91,7 +94,7 @@ async function deleteItemData(id){
   // Select everything from inventory table
   console.log(id);
   try{
-    await pool.query(`DELETE FROM "inventory" WHERE "itemid" = ${id}` );}
+    await pool.query(`DELETE FROM "ctm_inventory" WHERE "item_id" = ${id}` );}
   catch(e){
     throw e;
   }
