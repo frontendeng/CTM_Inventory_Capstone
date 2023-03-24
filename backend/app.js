@@ -8,7 +8,6 @@ const bodyParser = require("body-parser");
 app.set('view engine', 'ejs');
 // This line is needed to load bootstrap correctly
 app.use(express.static("views"));
-
 app.use(express.json()); //add req.body
 app.use(express.urlencoded({ extended: false }));
 //app.use(bodyParser.json());
@@ -25,62 +24,71 @@ const pool = new Pool({
 });
 
 app.get('/', async (req, res) => {
-  res.render('index.ejs', { data: await getInvData() });
+  res.render('viewall', { data: await getAllItems() });
 });
 
+// Get all item
+app.get("/inventory/viewall", async(req, res) => {
+  res.render('viewall.ejs', { data: await getAllItems() });
+});
 
-async function getInvData(){
-  var invData = [];
-  // Select everything from ctm_inventory table
+// Get all items function
+async function getAllItems(){
   try{
-    invData =  (await pool.query('SELECT * FROM "ctm_inventory";' )).rows;
+    const allItems = (await pool.query("SELECT * FROM ctm_inventory ORDER BY item_id")).rows;
+    return allItems;
+  } catch (err)
+  {
+    console.error(err.message) 
   }
-  catch(e){
-    throw e;
-  }
-  return invData;
 }
 
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+//get one item
+app.get("/inventory/viewone/:id", async(req, res) => {
+  res.render('viewone.ejs', { data: await getOneItem(req) });
 });
 
+// Get one item function
+async function getOneItem(req){
+  const { id } = req.params;
+  try{
+    const getItem = (await pool.query("SELECT * FROM ctm_inventory WHERE item_id=$1", [id])).rows;
+    console.log(getItem);
+    return getItem;
+  } catch (err)
+  {
+    console.error(err.message) 
+  }
+}
 
 //add item
-app.post("/inventory/add", async(req, res) => {
+app.post('/inventory/add', async (req, res) => {
+  console.log(req.body)
+  await addItem(req);
+  res.render('viewall.ejs', { data: await getAllItems() });
+  
+});
+
+app.get('/inventory/add', async (req, res) => {
+  res.render('add.ejs');
+
+});
+
+//function for add item
+async function addItem(req){
+  console.log("This is addItem", req.body);
+  var invData = [];
   try{
     const {item_desc, category, possession, condition, qty} = req.body;
     const newItem = await pool.query("INSERT INTO ctm_inventory (item_desc, category, possession, condition, qty) VALUES ($1, $2, $3, $4, $5) RETURNING *", [item_desc, category, possession, condition, qty]);
-    res.json(newItem.rows[0]);
+  
   } catch (err)
     {
        console.error(err.message) 
     }
-});
+    return invData;
+};
 
-//get all item
-app.get("/inventory/get", async(req, res) => {
-  try{
-    const getItems = await pool.query("SELECT * FROM ctm_inventory");
-    res.json(getItems.rows);
-  } catch (err)
-    {
-       console.error(err.message) 
-    }
-});
-
-//get one item
-app.get("/inventory/get/:id", async(req, res) => {
-  const { id } = req.params;
-  try{
-    const getItem = await pool.query("SELECT * FROM ctm_inventory WHERE item_id=$1", [id]);
-    res.json(getItem.rows);
-  } catch (err)
-    {
-       console.error(err.message) 
-    }
-});
 
 //update an item
 app.put("/inventory/:id", async(req, res) => {
@@ -107,4 +115,6 @@ app.delete("/inventory/:id", async(req, res) => {
     }
 });
 
-
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+});
