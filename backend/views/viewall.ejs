@@ -76,6 +76,10 @@
                     <h3 class="fs-4 mb-3">Equipment</h3>
                     <div class="col">
                         <a href="add" class="btn btn-success mb-3"> <i class="fa-solid fa-plus"></i> Add Equipment</a>
+                        <div class="input-group mb-3" style="max-width: 20%;">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Search</span>
+                            <input type="text" class="form-control" id="search-input" onkeyup="search()" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                        </div>
                         <table class="table bg-white rounded shadow-sm  table-hover">
                         <table class="table bg-white rounded shadow-sm  table-hover">
                             <thead>
@@ -91,10 +95,10 @@
                                     
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="item-list">
                               <!-- Loop through fetched data and build the inventory list -->
                                 <% for(var i = 0; i < data.length; i++) {%>
-                                  <tr>
+                                  <tr class="item-row">
                                     <th scope="row"><%= data[i].item_id %></th>
                                     <td><%= data[i].item_desc %></td>
                                     <td><%= data[i].qty %></td>
@@ -133,7 +137,30 @@
     toggleButton.onclick = function () {
         el.classList.toggle("toggled");
     }; 
+
+    // Live search function
+    // Taken from https://www.w3schools.com/howto/howto_js_filter_lists.asp
+    function search() {
+    // Declare variables
+    var input, filter, list, tr, td, i, txtValue;
+    input = document.getElementById('search-input');
+    filter = input.value.toUpperCase();
+    list = document.getElementById("item-list");
+    tr = list.getElementsByTagName('tr');
+
+    // Loop through all list items, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+        // Currently searches by item_desc
+        td = tr[i].getElementsByTagName("td")[0];
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+        } else {
+        tr[i].style.display = "none";
+        }
+    }}
     </script>
+    
 </body>
 
 </html>
