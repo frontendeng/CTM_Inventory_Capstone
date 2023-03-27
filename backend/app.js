@@ -1,17 +1,15 @@
 const express = require('express');
 const { Pool } = require('pg');
 const app = express();
+const bp = require('body-parser'); 
 const port = 3000;
-const bodyParser = require("body-parser");
 
 // Set view engine to ejs
+app.set('views', './backend/views');
 app.set('view engine', 'ejs');
-// This line is needed to load bootstrap correctly
 app.use(express.static("views"));
-app.use(express.json()); //add req.body
-app.use(express.urlencoded({ extended: false }));
-//app.use(bodyParser.json());
-
+app.use(bp.json());
+app.use(bp.urlencoded({ extended: true }));
 
 // Create a connection pool using the connection information provided on bit.io.
 const pool = new Pool({
@@ -23,8 +21,9 @@ const pool = new Pool({
   ssl: true,
 });
 
+
 app.get('/', async (req, res) => {
-  res.render('viewall', { data: await getAllItems() });
+  res.render('viewall.ejs', { data: await getAllItems() });
 });
 
 // Get all item
@@ -43,7 +42,7 @@ async function getAllItems(){
   }
 }
 
-//get one item
+// Get one item
 app.get("/inventory/viewone/:id", async(req, res) => {
   res.render('viewone.ejs', { data: await getOneItem(req) });
 });
@@ -61,7 +60,8 @@ async function getOneItem(req){
   }
 }
 
-//add item
+
+// Add item
 app.post('/inventory/add', async (req, res) => {
   console.log(req.body)
   await addItem(req);
@@ -71,10 +71,9 @@ app.post('/inventory/add', async (req, res) => {
 
 app.get('/inventory/add', async (req, res) => {
   res.render('add.ejs');
-
 });
 
-//function for add item
+// Function for add item
 async function addItem(req){
   console.log("This is addItem", req.body);
   var invData = [];
@@ -90,20 +89,31 @@ async function addItem(req){
 };
 
 
-//update an item
-app.put("/inventory/:id", async(req, res) => {
-  try{
-    const { id } = req.params; 
-    const { item_desc, category, possession, condition, qty } = req.body; 
-    const getItem = await pool.query("UPDATE ctm_inventory SET item_desc= $1, category= $2, possession=$3, condition= $4, qty=$5 WHERE item_id=$6", [item_desc, category, possession, condition, qty, id]);
-    res.json("Item was updated!");
-  } catch (err)
-    {
-       console.error(err.message) 
-    }
+// Edit Item
+app.get('/edit', async (req, res) => {
+  res.render('edit', { data: await getItemData(req.query.id) });
 });
 
-//delete an item
+app.post('/edit_confirm', async (req, res) => {
+  var body = req.body;
+  console.log(body);
+  await editItemData(body.id, body.itemdesc,/* body.condition,*/ body.qty, body.possession, body.category);
+  res.redirect('/');
+});
+
+async function editItemData(id, itemDesc, qty, possession, category){
+  var invData = [];
+  // Select everything from inventory table
+  try{
+  invData =  (await pool.query(`UPDATE ctm_inventory SET item_desc = '${itemDesc}', category = '${category}',`/* 'condition' = ${condition},*/ +`possession = '${possession}', qty = ${qty} WHERE item_id = ${id} ;` )).rows;}
+  catch(e){
+    throw e;
+  }
+  return invData;
+}
+
+
+// Delete an item
 app.delete("/inventory/:id", async(req, res) => {
   try{
     const { id } = req.params; 
@@ -115,6 +125,7 @@ app.delete("/inventory/:id", async(req, res) => {
     }
 });
 
+
 app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+  console.log(`CTM Inventory App, listening on port ${port}`);
 });

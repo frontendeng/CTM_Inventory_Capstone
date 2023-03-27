@@ -13,7 +13,7 @@
      <!-- FontAwesome Icons -->
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="/styles.css" />
     <title>CTM Equipment Management</title>
 </head>
 
@@ -72,63 +72,62 @@
                 </div>
             </nav>
 
-            <div class="container-fluid px-4">
+            <!-- Read One Equipment page -->
 
-                <div class="row my-5">
-                    <h3 class="fs-4 mb-3">Edit Equipment Item</h3>
-                    <div class="col">
-                        
-                          
-                        <form method="post" action="/edit_confirm">
-                            <input type="number" name="id" value="<%= data[0].item_id %>" hidden>
-                            <label for="itemdesc">Item:</label><br>
-                            <input type="text" id="itemdesc" name="itemdesc" value="<%= data[0].item_desc%>">
-                            <br>
-                            <br>
-
-                            <label for="qty">Quantity:</label><br>
-                            <input type="text" id="qty" name="qty"  value="<%= data[0].qty%>">
-                            <br><br>
-
-                            <label for="possession">Assigned To:</label><br>
-                            <input type="text" id="possession" name="possession"  value="<%= data[0].possession%>">
-
-                            <!--
-                            <br><br>
-
-                            <label for="current_loc">Current Location:</label><br>
-                            <input type="text" id="current_loc" name="current_loc">
-                            <script>
-                                var x = document.getElementById("current_loc");
-                                x.value = "Ricardo's house";
-                            </script>
-
-                            <br><br>
-
-                            <label for="last_loc">Last Location:</label><br>
-                            <input type="text" id="last_loc" name="last_loc">
-                            <script>
-                                var x = document.getElementById("last_loc");
-                                x.value = "Festival 2023";
-                            </script>-->
-
-                            <br><br>
-                            
-                            <label for="category">Notes:</label><br>
-                            <textarea id="category" name="category" rows="4" cols="50"><%= data[0].category%>
-                            </textarea>
-                                
-                            
-                            <br><br>
-
-                           <div class="mx-auto ">
-                            <button type="submit" class="btn btn-success text">Submit</button>
-
-                          </form>                   
-                        
-                    </div>
+             <div class="container mt-5 mx-auto col-10 col-md-8 col-lg-6"> 
+                <h1>Equipment Details</h1>
+                <form>
+                <div class="row">
+                  <div class="form-group col-md-3">
+                    <label for="id"><strong>ID:</strong></label>
+                    <%= data[0].item_id %>
+                  </div>
                 </div>
 
+                  <div class="form-group col-md-6">
+                    <label for="item"><strong>Item:</strong></label>
+                    <%= data[0].item_desc %>
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <label for="item"><strong>Category:</strong></label>
+                    <%= data[0].category %>
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <label for="item"><strong>Condition:</strong></label>
+                    <%= data[0].condition %>
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <label for="quantity"><strong>Quantity:</strong></label>
+                    <%= data[0].qty %>
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <label for="assign"><strong>Assigned to:</strong></label>
+                    <%= data[0].possession %>
+                  </div>
+
+                  <br>
+                  <div class="form-group col-md-6">
+                    <label for="assign"><strong><%= data[0].possession %>'s Contact Details</strong></label>
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <label for="assign"><strong>Mobile:</strong></label>
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <label for="assign"><strong>Email:</strong></label>
+                  </div>
+
+                  <br>
+
+                  <div class="mx-auto col-10 col-md-8 col-lg-6">
+                    <button type="submit" class="btn btn-success text"><a href="/inventory/viewall" style="text-decoration: none; color: white;">Return to Inventory</a></button>
+                  </div>
+                </form>
             </div>
         </div>
     </div>
@@ -146,6 +145,15 @@
     toggleButton.onclick = function () {
         el.classList.toggle("toggled");
     }; 
+
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+          var output = document.getElementById('preview');
+          output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+      }
     </script>
 </body>
 
