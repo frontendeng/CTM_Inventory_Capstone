@@ -30,18 +30,21 @@
             <!-- Dynamic component for each data row -->
             <% for(var i = 0; i < data.length; i++) {%>
                 <tr>
-                    <td><%= data[i].itemdesc %></td>
+                    <td><%= data[i].item_desc %></td>
                     <td><%= data[i].category %></td>
                     <td><%= data[i].possession %></td>
                     <td><%= data[i].condition %></td>
                     <td><%= data[i].qty %></td>
                     <td><form method="get" action="/view"
-                        ><input type="number" name="id" value="<%= data[i].itemid %>" hidden>
+                        ><input type="number" name="id" value="<%= data[i].item_id %>" hidden>
                         <input type = "submit"  Value = "View">
                     </form></td>
-                    <td><a href="edit.ejs">Edit</a></td>
+                    <td><form method="get" action="/edit"
+                        ><input type="number" name="id" value="<%= data[i].item_id %>" hidden>
+                        <input type = "submit"  Value = "Edit">
+                    </form></td>
                     <td><form method="get" action="/delete">
-                        <input type="number" name="id" value="<%= data[i].itemid %>" hidden>
+                        <input type="number" name="id" value="<%= data[i].item_id %>" hidden>
                         <input type = "submit"  Value = "Delete">
                     </form></td>
                 </tr>

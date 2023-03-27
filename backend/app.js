@@ -1,17 +1,14 @@
 const express = require('express');
 const { Pool } = require('pg');
 const app = express();
+const bp = require('body-parser'); 
 const port = 3000;
-const bodyParser = require("body-parser");
 
 // Set view engine to ejs
+app.set('views', './backend/views');
 app.set('view engine', 'ejs');
-// This line is needed to load bootstrap correctly
-app.use(express.static("views"));
-app.use(express.json()); //add req.body
-app.use(express.urlencoded({ extended: false }));
-//app.use(bodyParser.json());
-
+app.use(bp.json())
+app.use(bp.urlencoded({ extended: true }))
 
 // Create a connection pool using the connection information provided on bit.io.
 const pool = new Pool({
@@ -21,6 +18,16 @@ const pool = new Pool({
   password: '', // password
   port: 5432, 
   ssl: true,
+});
+
+app.post('/edit_confirm', async (req, res) => {
+  var body = req.body;
+  console.log(body);
+  await editItemData(body.id, body.itemdesc,/* body.condition,*/ body.qty, body.possession, body.category);
+  res.redirect('/');
+});
+app.get('/edit', async (req, res) => {
+  res.render('edit', { data: await getItemData(req.query.id) });
 });
 
 app.get('/', async (req, res) => {
@@ -77,18 +84,17 @@ app.post("/inventory/add", async(req, res) => {
   }
 });
 
-// Update an item
-app.put("/inventory/:id", async(req, res) => {
+
+async function editItemData(id, itemDesc, qty, possession, category){
+  var invData = [];
+  // Select everything from inventory table
   try{
-    const { id } = req.params; 
-    const { item_desc, category, possession, condition, qty } = req.body; 
-    const getItem = await pool.query("UPDATE ctm_inventory SET item_desc= $1, category= $2, possession=$3, condition= $4, qty=$5 WHERE item_id=$6", [item_desc, category, possession, condition, qty, id]);
-    res.json("Item was updated!");
-  } catch (err)
-    {
-       console.error(err.message) 
-    }
-});
+  invData =  (await pool.query(`UPDATE ctm_inventory SET item_desc = '${itemDesc}', category = '${category}',`/* 'condition' = ${condition},*/ +`possession = '${possession}', qty = ${qty} WHERE item_id = ${id} ;` )).rows;}
+  catch(e){
+    throw e;
+  }
+  return invData;
+}
 
 // Delete an item
 app.delete("/inventory/:id", async(req, res) => {
