@@ -12,34 +12,12 @@ app.use(bp.urlencoded({ extended: true }))
 
 // Create a connection pool using the connection information provided on bit.io.
 const pool = new Pool({
-  user: 'Matt-Bruce111', // Username, Leave as Matt-Bruce111 for now
+  user: '', // User
   host: 'db.bit.io', // Always db.bit.io
-  database: 'Matt-Bruce111/inv1', // public database 
-  password: 'v2_3zqF7_ptTKqKXWCFasAWNRcdeXPxU', // key from bit.io database page connect menu
-  port: 5432,
+  database: '', // public database name
+  password: '', // password
+  port: 5432, 
   ssl: true,
-});
-
-app.get('/', async (req, res) => {
-  // var invData = await getInvData();
-  // ### Currently not displaying the data in the html page, believed to be an async issue as the page is being loaded before the data is fetched from bit.io
-
-  res.render('index', { data: await getInvData() });
-});
-
-app.get('/view', async (req, res) => {
-
-  res.render('view', { data: await getItemData(req.query.id) });
-});
-
-app.get('/delete', async (req, res) => {
-
-  res.render('delete', { data: await getItemData(req.query.id) });
-});
-
-app.post('/delete_confirm', async (req, res) => {
-  await deleteItemData(req.body.id);
-  res.redirect('/');
 });
 
 app.post('/edit_confirm', async (req, res) => {
@@ -52,20 +30,60 @@ app.get('/edit', async (req, res) => {
   res.render('edit', { data: await getItemData(req.query.id) });
 });
 
+app.get('/', async (req, res) => {
+  res.render('viewall.ejs', { data: await getAllItems() });
+});
+
+// Get all item
+app.get("/inventory/viewall", async(req, res) => {
+  res.render('viewall.ejs', { data: await getAllItems() });
+});
+
+// Get all items function
+async function getAllItems(){
+  try{
+    const allItems = (await pool.query("SELECT * FROM ctm_inventory ORDER BY item_id")).rows;
+    return allItems;
+  } catch (err)
+  {
+    console.error(err.message) 
+  }
+}
+
+// Get one item
+app.get("/inventory/viewone/:id", async(req, res) => {
+  res.render('viewone.ejs', { data: await getOneItem(req) });
+});
+
+// Get one item function
+async function getOneItem(req){
+  const { id } = req.params;
+  try{
+    const getItem = (await pool.query("SELECT * FROM ctm_inventory WHERE item_id=$1", [id])).rows;
+    console.log(getItem);
+    return getItem;
+  } catch (err)
+  {
+    console.error(err.message) 
+  }
+}
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 
-async function getInvData(){
-  var invData = [];
-  // Select everything from inventory table
+
+// Add item
+app.post("/inventory/add", async(req, res) => {
   try{
-  invData =  (await pool.query('SELECT * FROM "ctm_inventory";' )).rows;}
-  catch(e){
-    throw e;
+    const {item_desc, category, possession, condition, qty} = req.body;
+    const newItem = await pool.query("INSERT INTO ctm_inventory (item_desc, category, possession, condition, qty) VALUES ($1, $2, $3, $4, $5) RETURNING *", [item_desc, category, possession, condition, qty]);
+    res.json(newItem.rows[0]);
+  } catch (err){
+    console.error(err.message) 
   }
-  return invData;
-}
+});
+
 
 async function editItemData(id, itemDesc, qty, possession, category){
   var invData = [];
@@ -78,24 +96,14 @@ async function editItemData(id, itemDesc, qty, possession, category){
   return invData;
 }
 
-async function getItemData(id){
-  var itemData;
-  // Select everything from inventory table
+// Delete an item
+app.delete("/inventory/:id", async(req, res) => {
   try{
-    itemData =  (await pool.query(`SELECT * FROM "ctm_inventory" WHERE item_id = ${id};` )).rows;}
-  catch(e){
-    throw e;
-  }
-  console.log(itemData);
-  return itemData;
-}
-
-async function deleteItemData(id){
-  // Select everything from inventory table
-  console.log(id);
-  try{
-    await pool.query(`DELETE FROM "ctm_inventory" WHERE "item_id" = ${id}` );}
-  catch(e){
-    throw e;
-  }
-}
+    const { id } = req.params; 
+    const deleteItem = await pool.query("DELETE FROM ctm_inventory WHERE item_id=$1", [id]);
+    res.json("Item was successfully deleted!");
+  } catch (err)
+    {
+       console.error(err.message) 
+    }
+});
