@@ -43,7 +43,7 @@ async function getAllItems(){
   }
 }
 
-//get one item
+// Get one item
 app.get("/inventory/viewone/:id", async(req, res) => {
   res.render('viewone.ejs', { data: await getOneItem(req) });
 });
@@ -61,14 +61,12 @@ async function getOneItem(req){
   }
 }
 
-
-
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 
 
-//add item
+// Add item
 app.post("/inventory/add", async(req, res) => {
   try{
     const {item_desc, category, possession, condition, qty} = req.body;
@@ -79,9 +77,7 @@ app.post("/inventory/add", async(req, res) => {
   }
 });
 
-
-
-//update an item
+// Update an item
 app.put("/inventory/:id", async(req, res) => {
   try{
     const { id } = req.params; 
@@ -94,7 +90,7 @@ app.put("/inventory/:id", async(req, res) => {
     }
 });
 
-//delete an item
+// Delete an item
 app.delete("/inventory/:id", async(req, res) => {
   try{
     const { id } = req.params; 
