@@ -40,6 +40,12 @@ app.post('/delete_confirm', async (req, res) => {
   res.redirect('/');
 });
 
+app.post('/login', async (req, res) => {
+  await validateLogin(req.body.username, req.body.password);
+  res.redirect('/');
+});
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
@@ -76,4 +82,14 @@ async function deleteItemData(id){
   catch(e){
     throw e;
   }
+}
+
+async function validateLogin(username, password){
+	
+	// search for username in database
+	
+	// validate the password
+	
+	// return the result: success or fail
+	
 }
