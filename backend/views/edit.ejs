@@ -13,7 +13,7 @@
      <!-- FontAwesome Icons -->
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="/styles.css" />
     <title>CTM Equipment Management</title>
 </head>
 
@@ -113,10 +113,9 @@
                             </script>-->
 
                             <br><br>
-                            
-                            <label for="category">Notes:</label><br>
-                            <textarea id="category" name="category" rows="4" cols="50"><%= data[0].category%>
-                            </textarea>
+
+                            <label for="category">Category:</label><br>
+                            <input type="text" id="category" name="category"  value="<%= data[0].category%>">
                                 
                             
                             <br><br>

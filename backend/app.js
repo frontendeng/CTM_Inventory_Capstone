@@ -5,11 +5,11 @@ const bp = require('body-parser');
 const port = 3000;
 
 // Set view engine to ejs
-app.set('views', './backend/views');
+//app.set('views', './backend/views');
 app.set('view engine', 'ejs');
 app.use(express.static("views"));
-app.use(bp.json());
-app.use(bp.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // Create a connection pool using the connection information provided on bit.io.
 const pool = new Pool({
@@ -52,7 +52,7 @@ async function getOneItem(req){
   const { id } = req.params;
   try{
     const getItem = (await pool.query("SELECT * FROM ctm_inventory WHERE item_id=$1", [id])).rows;
-    console.log(getItem);
+    //console.log(getItem);
     return getItem;
   } catch (err)
   {
@@ -62,6 +62,10 @@ async function getOneItem(req){
 
 
 // Add item
+app.get('/inventory/add', async (req, res) => {
+  res.render('add.ejs');
+});
+
 app.post('/inventory/add', async (req, res) => {
   console.log(req.body)
   await addItem(req);
@@ -69,11 +73,6 @@ app.post('/inventory/add', async (req, res) => {
   
 });
 
-app.get('/inventory/add', async (req, res) => {
-  res.render('add.ejs');
-});
-
-// Function for add item
 async function addItem(req){
   console.log("This is addItem", req.body);
   var invData = [];
@@ -90,8 +89,8 @@ async function addItem(req){
 
 
 // Edit Item
-app.get('/edit', async (req, res) => {
-  res.render('edit', { data: await getItemData(req.query.id) });
+app.get('/inventory/edit/:id', async (req, res) => {
+  res.render('edit.ejs', { data: await getOneItem(req) });
 });
 
 app.post('/edit_confirm', async (req, res) => {
@@ -114,16 +113,25 @@ async function editItemData(id, itemDesc, qty, possession, category){
 
 
 // Delete an item
-app.delete("/inventory/:id", async(req, res) => {
-  try{
-    const { id } = req.params; 
-    const deleteItem = await pool.query("DELETE FROM ctm_inventory WHERE item_id=$1", [id]);
-    res.json("Item was successfully deleted!");
-  } catch (err)
-    {
-       console.error(err.message) 
-    }
+app.get('/inventory/delete/:id', async (req, res) => {
+  res.render('delete.ejs', { data: await getOneItem(req) });
 });
+
+app.post('/delete_confirm', async (req, res) => {
+  await deleteItem(req)
+  res.redirect('/');
+});
+
+async function deleteItem(req){
+  try{
+    const id = req.body.id; 
+    const deleteItem = await pool.query("DELETE FROM ctm_inventory WHERE item_id=$1", [id]);
+    //res.json("Item was successfully deleted!");
+  } catch (err)
+  {
+    console.error(err.message) 
+  }
+}
 
 
 app.listen(port, () => {
