@@ -72,67 +72,93 @@
                 </div>
             </nav>
 
+                     <!-- Page Breadcrumb -->
+               <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="item_read_all.html">Home</a></li>
+                  <li class="breadcrumb-item"><a href="item_read_all.html">Inventory Management</a></li>
+                  <li class="breadcrumb-item active" 
+                  aria-current="page">Add Item</li>
+                </ol>
+              </nav>
+
             <!-- Add Equipment page -->
 
-             <div class="container mt-5 mx-auto col-10 col-md-8 col-lg-6"> 
-                <h1>Add Equipment</h1>
-                <form>
-                <div class="row">
-                  <div class="form-group col-md-3">
-                    <label for="id">ID:</label>
-                    <input type="text" class="form-control" id="name" placeholder="Enter ID">
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="quantity">Quantity:</label>
-                    <input type="text" class="form-control" id="quantity" placeholder="Quantity">
-                  </div>
-                </div>
+            <div class="container mt-5">
+              <div class="card">
+                  <h1 class="card-header text-center text-success">Add New Item</h1>
+                  
+                  <div class="card-body">
+                      <form role="form" ></form>
+      
+                         <div class="row">
+                          <div class="form-group col-md-4">
+                            <label for="item-id">ID:</label>
+                            <input type="text" class="form-control" id="item-id" placeholder="Enter ID">
+                          </div>
 
-                
-                  <div class="form-group col-md-6">
-                    <label for="item">Item:</label>
-                    <input type="text" class="form-control" id="item" placeholder="Enter item name" >
-                  </div>
+                          <div class="form-group col-md-4">
+                            <label for="quantity">Quantity:</label>
+                            <input type="text" class="form-control" id="quantity" placeholder="quantity">
+                          </div>
+                        </div>
+      
+                        <div class="row">
+                        <div class="form-group col-md-6">
+                          <label for="item">Item:</label>
+                          <input type="text" class="form-control" id="item" placeholder="Enter item name" >
+                        </div>
 
-                  <div class="form-group col-md-6">
-                    <label for="condition">Condition:</label>
-                    <input type="text" class="form-control" id="condition" placeholder="Condtion of item" >
-                  </div>
-                
-                  <div class="form-group col-md-6">
-                    <label for="assign">Assigned to:</label>
-                     <select id="assign" class="form-control">
-                        <option value="">not assigned</option>
-                        <option>Jenny</option>
-                        <option>Sathy</option>
-                      </select>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="current">Current location:</label>
-                    <input type="text" class="form-control" id="current" placeholder="Enter current location">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="last">Last location:</label>
-                    <input type="text" class="form-control" id="last" placeholder="Enter last location">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="message">Notes:</label>
-                    <textarea class="form-control" id="notes" rows="5" placeholder="Enter notes"></textarea>
-                  </div>
-                  <div class="form-group">
-                    <label for="image">Upload Image:</label>
-                    <input type="file" class="form-control-file" id="image" onchange="previewImage(event)">
-                  </div>
-                  <br>
-                  <div class="mx-auto col-10 col-md-8 col-lg-6">
-                  <button type="submit" class="btn btn-success text">Submit</button>
-                </div>
-                </form>
-            </div>
+                        
+                        <div class="form-group col-md-6">
+                          <label for="condition">Condition:</label>
+                          <input type="text" class="form-control" id="condition" placeholder="Condtion of item" >
+                        </div>
+                      </div>
+                      
+                        <div class="form-group mb-3">
+                          <label for="current">Current location:</label>
+                          <input type="text" class="form-control" id="current" placeholder="Enter current location">
+                        </div>
+                      
 
+                        <div class="form-group mb-3">
+                          <label for="last">Last location:</label>
+                          <input type="text" class="form-control" id="last" placeholder="Enter last location">
+                        </div>
+              
+                        <div class="form-group mb-3">
+                          <label for="message">Notes:</label>
+                          <textarea class="form-control" id="notes" rows="5" placeholder="Enter notes"></textarea>
+                        </div>
+      
+                        <div class="form-group">
+                          <label for="image">Upload Image:</label>
+                          <input type="file" class="form-control-file" id="image" onchange="previewImage(event)">
+                        </div>
+
+                          <br>
+                          <div class="form-group col-md-6">
+                            <label for="assign">Assigned to:</label>
+                             <select id="assign" class="form-control">
+                                <option value="">not assigned</option>
+                                <option>Jenny</option>
+                                <option>Sathy</option>
+                              </select>
+                          </div>
         
+                          <div class="row">
+                          <div class="text-center">
+                          <button type="submit" class="btn btn-success m-3">Add Item</button>
+                          <a href="item_read_all.html"class="btn btn-danger ">Cancel </a>
+                        </div>
+                        
+                        </div>
+                      </form>
+                  </div>
+              </div>
+          </div>
         </div>
-    </div>
     <!-- /#page-content-wrapper -->
     </div>
 
