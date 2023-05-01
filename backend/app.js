@@ -23,18 +23,18 @@ const pool = new Pool({
 
 
 app.get('/', async (req, res) => {
-  res.render('viewall.ejs', { data: await getAllItems() });
+  res.render('inventory/viewall.ejs', { data: await getAllItems() });
 });
 
 // Get all item
 app.get("/inventory/viewall", async(req, res) => {
-  res.render('viewall.ejs', { data: await getAllItems() });
+  res.render('inventory/viewall.ejs', { data: await getAllItems() });
 });
 
 // Get all items function
 async function getAllItems(){
   try{
-    const allItems = (await pool.query("SELECT * FROM ctm_inventory ORDER BY item_id")).rows;
+    const allItems = (await pool.query("SELECT * FROM ctm_inventory INNER JOIN address ON address_id = address_id ORDER BY item_id")).rows;
     return allItems;
   } catch (err)
   {
@@ -44,14 +44,14 @@ async function getAllItems(){
 
 // Get one item
 app.get("/inventory/viewone/:id", async(req, res) => {
-  res.render('viewone.ejs', { data: await getOneItem(req) });
+  res.render('inventory/viewone.ejs', { data: await getOneItem(req) });
 });
 
 // Get one item function
 async function getOneItem(req){
   const { id } = req.params;
   try{
-    const getItem = (await pool.query("SELECT * FROM ctm_inventory WHERE item_id=$1", [id])).rows;
+    const getItem = (await pool.query("SELECT * FROM ctm_inventory INNER JOIN address ON address_id = address_id WHERE item_id=$1", [id])).rows;
     //console.log(getItem);
     return getItem;
   } catch (err)
@@ -63,13 +63,13 @@ async function getOneItem(req){
 
 // Add item
 app.get('/inventory/add', async (req, res) => {
-  res.render('add.ejs');
+  res.render('inventory/add.ejs');
 });
 
 app.post('/inventory/add', async (req, res) => {
   console.log(req.body)
   await addItem(req);
-  res.render('viewall.ejs', { data: await getAllItems() });
+  res.render('inventory/viewall.ejs', { data: await getAllItems() });
   
 });
 
@@ -77,9 +77,13 @@ async function addItem(req){
   console.log("This is addItem", req.body);
   var invData = [];
   try{
-    const {item_desc, category, possession, condition, qty} = req.body;
-    const newItem = await pool.query("INSERT INTO ctm_inventory (item_desc, category, possession, condition, qty) VALUES ($1, $2, $3, $4, $5) RETURNING *", [item_desc, category, possession, condition, qty]);
-  
+    const {item_desc, category, possession, condition, qty, line_1, line_2, city, state, post, country, address_id} = req.body;
+    if(address_id === "" ?? null){
+      const newAddress = await pool.query("INSERT INTO address (street_line_1, street_line_2, city, state, postcode, country) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [line_1, line_2, city, state, post, country]);
+      address_id = newAddress.address_id;
+    }
+    const newItem = await pool.query("INSERT INTO ctm_inventory (item_desc, category, possession, condition, qty, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [item_desc, category, possession, condition, qty, address_id]);
+    
   } catch (err)
     {
        console.error(err.message) 
@@ -90,21 +94,25 @@ async function addItem(req){
 
 // Edit Item
 app.get('/inventory/edit/:id', async (req, res) => {
-  res.render('edit.ejs', { data: await getOneItem(req) });
+  res.render('inventory/edit.ejs', { data: await getOneItem(req) });
 });
 
 app.post('/edit_confirm', async (req, res) => {
   var body = req.body;
   console.log(body);
-  await editItemData(body.id, body.itemdesc,/* body.condition,*/ body.qty, body.possession, body.category);
+  await editItemData(body.id, body.itemdesc,/* body.condition, body.address_id, body.line_1, body.line_2, body.city, body.state, body.post, body.country,*/ body.qty, body.possession, body.category);
   res.redirect('/');
 });
 
-async function editItemData(id, itemDesc, qty, possession, category){
+async function editItemData(id, itemDesc,/* condition, address_id, line_1, line_2, city, state, post, country,*/ qty, possession, category){
   var invData = [];
   // Select everything from inventory table
   try{
-  invData =  (await pool.query(`UPDATE ctm_inventory SET item_desc = '${itemDesc}', category = '${category}',`/* 'condition' = ${condition},*/ +`possession = '${possession}', qty = ${qty} WHERE item_id = ${id} ;` )).rows;}
+    if(address_id === "" ?? null){
+      const newAddress = await pool.query("INSERT INTO address (street_line_1, street_line_2, city, state, postcode, country) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [line_1, line_2, city, state, post, country]);
+      address_id = newAddress.address_id;
+    }
+  invData =  (await pool.query(`UPDATE ctm_inventory SET item_desc = '${itemDesc}', category = '${category}',`/* 'condition' = ${condition}, 'address_id' = ${address_id},*/ +`possession = '${possession}', qty = ${qty} WHERE item_id = ${id} ;` )).rows;}
   catch(e){
     throw e;
   }
@@ -114,7 +122,7 @@ async function editItemData(id, itemDesc, qty, possession, category){
 
 // Delete an item
 app.get('/inventory/delete/:id', async (req, res) => {
-  res.render('delete.ejs', { data: await getOneItem(req) });
+  res.render('inventory/delete.ejs', { data: await getOneItem(req) });
 });
 
 app.post('/delete_confirm', async (req, res) => {
