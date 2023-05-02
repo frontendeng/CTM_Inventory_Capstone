@@ -72,80 +72,116 @@
                 </div>
             </nav>
 
-            <div class="container-fluid px-4">
+            <!-- Page Breadcrumb -->
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="item_read_all.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="item_read_all.html">Inventory Management</a></li>
+                    <li class="breadcrumb-item active" 
+                    aria-current="page">Edit Item</li>
+                </ol>
+            </nav>
 
-                <div class="row my-5">
-                    <h3 class="fs-4 mb-3">Edit Equipment Item</h3>
-                    <div class="col">
-                        
+                
+
+
+            <!-- Edit Item Form -->
+            <div class="container mt-5">
+                <div class="card">
+                    <h1 class="card-header text-center text-success">Edit Item</h1>
+                    
+                    <div class="card-body">
+                        <form role="form" ></form>
+        
+                           <div class="row">
+                            <div class="form-group col-md-4">
+                              <label for="item-id">ID:</label>
+                              <input type="text" class="form-control" id="item-id" placeholder="1">
+                            </div>
+  
+                            <div class="form-group col-md-4">
+                              <label for="quantity">Quantity:</label>
+                              <input type="text" class="form-control" id="quantity" placeholder="quantity">
+                            </div>
+                          </div>
+        
+                          <div class="row">
+                          <div class="form-group col-md-6">
+                            <label for="item">Item:</label>
+                            <input type="text" class="form-control" id="item" placeholder="Enter item name" >
+                          </div>
                           
-                        <form>
-                            <label for="item">Item:</label><br>
-                            <input type="text" id="item" name="item"><br>
-                            <script>
-                                var x = document.getElementById("item");
-                                x.value = "Mop and Bucket";
-                            </script>
+                          <div class="form-group col-md-6">
+                            <label for="condition">Condition:</label>
+                            <input type="text" class="form-control" id="condition" placeholder="Condition of item" >
+                          </div>
+                        </div>
+  
+                      <div class="form-group mb-3">
+                      <label for="locationAdd" class="form-label">Current Location</label>
+                        <input class="form-control" list="datalistOptions" id="locationAdd" placeholder="Type to search...">
+                        <datalist id="datalistOptions">
+                          <option value="First Location Address">
+                          <option value="Second Location Address">
+                          <option value="Third Location Address">
+                          <option value="Fourth Location Address">
+                          <option value="Fifth Location Address">
+                        </datalist>
+                      </div>
+  
+                      <label for="new-location">Add new location:</label>
+                        <div class="input-group mb-3">
+                          <input type="text" class="form-control" placeholder="Enter new address" aria-label="Enter new address" aria-describedby="basic-addon2">
+                          <div class="input-group-append">
+                            <!-- uncomment to link to a page -->
+                            <!-- <a href="#" button class="btn btn-outline-success" type="button">Add</button> </a> -->
+                            <button class="btn btn-outline-success" type="button">Add</button>
+                          </div>
+  
+                        </div>
+  
+                        <label for="previousLocation" class="form-label">Previous Location</label>
+                        <input class="form-control" list="datalistOptions" id="previousLocation" placeholder="Type to search...">
+                        <datalist id="datalistOptions">
+                          <option value="First Location Address">
+                          <option value="Second Location Address">
+                          <option value="Third Location Address">
+                          <option value="Fourth Location Address">
+                          <option value="Fifth Location Address">
+                        </datalist>
+                
+                          <div class="form-group mb-3">
+                            <label for="message">Notes:</label>
+                            <textarea class="form-control" id="notes" rows="5" placeholder="Enter notes"></textarea>
+                          </div>
+        
+                          <div class="form-group">
+                            <label for="image">Upload Image:</label>
+                            <input type="file" class="form-control-file" id="image" onchange="previewImage(event)">
+                          </div>
+  
                             <br>
-
-                            <label for="quantity">Quantity:</label><br>
-                            <input type="text" id="quantity" name="quantity">
-                            <script>
-                                var x = document.getElementById("quantity");
-                                x.value = "2";
-                            </script>
-
-                            <br><br>
-
-                            <label for="assigned">Assigned To:</label><br>
-                            <input type="text" id="assigned" name="assigned">
-                            <script>
-                                var x = document.getElementById("assigned");
-                                x.value = "Ricardo";
-                            </script>
-
-                            <br><br>
-
-                            <label for="current_loc">Current Location:</label><br>
-                            <input type="text" id="current_loc" name="current_loc">
-                            <script>
-                                var x = document.getElementById("current_loc");
-                                x.value = "Ricardo's house";
-                            </script>
-
-                            <br><br>
-
-                            <label for="last_loc">Last Location:</label><br>
-                            <input type="text" id="last_loc" name="last_loc">
-                            <script>
-                                var x = document.getElementById("last_loc");
-                                x.value = "Festival 2023";
-                            </script>
-
-                            <br><br>
-                            
-                            <label for="notes">Notes:</label><br>
-                            <textarea id="notes" name="notes" rows="4" cols="50">
-                            </textarea>
-                            <script>
-                                var x = document.getElementById("notes");
-                                x.value = "Contact Ricardo for more details.";
-                            </script>
-                                
-                            
-                            <br><br>
-
-                           <div class="mx-auto ">
-                            <button type="submit" class="btn btn-success text">Submit</button>
-
-                          </form>                   
-                        
+                            <div class="form-group col-md-6">
+                              <label for="assign">Assigned to:</label>
+                               <select id="assign" class="form-control">
+                                  <option value="">not assigned</option>
+                                  <option>Jenny</option>
+                                  <option>Sathy</option>
+                                </select>
+                            </div>
+          
+                            <div class="row">
+                            <div class="text-center">
+                            <button type="submit" class="btn btn-success col-2 m-3">Save</button>
+                            <a href="item_read_all.html"class="btn btn-danger col-2">Cancel </a>
+                          </div>
+                          
+                          </div>
+                        </form>
                     </div>
                 </div>
-
             </div>
-        </div>
-    </div>
+          </div>
     <!-- /#page-content-wrapper -->
     </div>
 
@@ -160,6 +196,15 @@
     toggleButton.onclick = function () {
         el.classList.toggle("toggled");
     }; 
+
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+          var output = document.getElementById('preview');
+          output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+      }
     </script>
 </body>
 
