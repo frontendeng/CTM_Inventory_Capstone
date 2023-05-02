@@ -63,8 +63,18 @@ async function getOneItem(req){
 
 // Add item
 app.get('/inventory/add', async (req, res) => {
-  res.render('inventory/add.ejs');
+  res.render('inventory/add.ejs', {address: await getAllAddresses() });
 });
+
+async function getAllAddresses(){
+  try{
+    const allAddresses = (await pool.query("SELECT * FROM address ORDER BY city")).rows;
+    return allAddresses;
+  } catch (err)
+  {
+    console.error(err.message) 
+  }
+}
 
 app.post('/inventory/add', async (req, res) => {
   console.log(req.body)
@@ -77,12 +87,8 @@ async function addItem(req){
   console.log("This is addItem", req.body);
   var invData = [];
   try{
-    const {item_desc, category, possession, condition, qty, line_1, line_2, city, state, post, country, address_id} = req.body;
-    if(address_id === "" ?? null){
-      const newAddress = await pool.query("INSERT INTO address (street_line_1, street_line_2, city, state, postcode, country) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [line_1, line_2, city, state, post, country]);
-      address_id = newAddress.address_id;
-    }
-    const newItem = await pool.query("INSERT INTO ctm_inventory (item_desc, category, possession, condition, qty, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [item_desc, category, possession, condition, qty, address_id]);
+    const {item_desc, category, possession, condition, qty, currentLocation, previousLocation} = req.body;
+    const newItem = await pool.query("INSERT INTO ctm_inventory (item_desc, category, possession, condition, qty, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [item_desc, category, possession, condition, qty, currentLocation]);
     
   } catch (err)
     {
@@ -94,7 +100,7 @@ async function addItem(req){
 
 // Edit Item
 app.get('/inventory/edit/:id', async (req, res) => {
-  res.render('inventory/edit.ejs', { data: await getOneItem(req) });
+  res.render('inventory/edit.ejs', { data: await getOneItem(req), address: await getAllAddresses()});
 });
 
 app.post('/edit_confirm', async (req, res) => {

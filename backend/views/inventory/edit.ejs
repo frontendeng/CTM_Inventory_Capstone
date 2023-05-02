@@ -93,24 +93,57 @@
                             <label for="possession">Assigned To:</label><br>
                             <input type="text" id="possession" name="possession"  value="<%= data[0].possession%>">
 
-                            <!--
-                            <br><br>
-
-                            <label for="current_loc">Current Location:</label><br>
-                            <input type="text" id="current_loc" name="current_loc">
-                            <script>
-                                var x = document.getElementById("current_loc");
-                                x.value = "Ricardo's house";
-                            </script>
-
-                            <br><br>
-
-                            <label for="last_loc">Last Location:</label><br>
-                            <input type="text" id="last_loc" name="last_loc">
-                            <script>
-                                var x = document.getElementById("last_loc");
-                                x.value = "Festival 2023";
-                            </script>-->
+                            <div class="form-group col-md-18">
+                                <label for="locationAdd" class="form-label">Current Location</label>
+                                <div id="currentOptions">
+                                  <input class="form-control" id="currentLocation-search" placeholder="Type to search..." onkeyup="filterCurrent()">
+                                  
+                                    <% for(var i = 0; i < address.length; i++) {
+                                    var addressStr =  address[i].street_line_1
+                                    if (address[i].street_line_2 !== null){
+                                      addressStr += ' ' + address[i].street_line_2
+                                    }
+                                    addressStr += ', ' + address[i].city + ', ' + address[i].state + ', ' + address[i].postcode
+                                    if(address[i].country !== null){
+                                      addressStr += ', ' + address[i].country
+                                    }
+                                    %>
+                                    <a class="address-option" onclick="selectCurrent('<%= address[i].address_id %>')" ><%= addressStr %></a><% } %>
+                                </div>
+                                  <input type="hidden" name="currentLocation" id="currentLocation">
+                              </div>
+                              
+                                
+                              <div class="form-group col-md-18">
+                                <label for="new-location" class="form-label">Add new location:</label>
+                                    <input type="text" class="form-control" placeholder="Enter new address" aria-label="Enter new address" aria-describedby="basic-addon2" id="locationAdd">
+                                    <div class="input-group-append">
+                                      <!-- uncomment to link to a page -->
+                                      <!-- <a href="#" button class="btn btn-outline-success" type="button">Add</button> </a> -->
+                                      <button class="btn btn-outline-success" type="button">Add</button>
+                                    </div>
+            
+                              </div>
+                                  
+                              <div class="form-group col-md-18">
+                                  <label for="previousLocation" class="form-label">Previous Location</label>
+                                  <div id="previousOptions">
+                                    <input class="form-control" id="previousLocation-search" placeholder="Type to search..." onkeyup="filterPrevious()">
+                                    
+                                      <% for(var i = 0; i < address.length; i++) {
+                                      var addressStr =  address[i].street_line_1
+                                      if (address[i].street_line_2 !== null){
+                                        addressStr += ' ' + address[i].street_line_2
+                                      }
+                                      addressStr += ', ' + address[i].city + ', ' + address[i].state + ', ' + address[i].postcode
+                                      if(address[i].country !== null){
+                                        addressStr += ', ' + address[i].country
+                                      }
+                                      %>
+                                      <a class="address-option" onclick="selectPrevious('<%= address[i].address_id %>')" ><%= addressStr %></a><% } %>
+                                    </div>
+                                    <input type="hidden" name="previousLocation" id="previousLocation">
+                              </div>
 
                             <br><br>
 
@@ -145,6 +178,63 @@
     toggleButton.onclick = function () {
         el.classList.toggle("toggled");
     }; 
+
+    function filterCurrent() {
+      var input, filter, ul, li, a, i, match;
+      input = document.getElementById("currentLocation-search");
+      filter = input.value.toUpperCase();
+      div = document.getElementById("currentOptions");
+      a = div.getElementsByTagName("a");
+      match = 0;
+      for (i = 0; i < a.length; i++) {
+        if (match > 5){ break; }
+        txtValue = a[i].textContent || a[i].innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          a[i].style.display = "block";
+          match += 1;
+        } else {
+          a[i].style.display = "none";
+        }
+      }
+
+      if (match > 5){
+        for (i = 0; i < a.length; i++) {
+            a[i].style.display = "none";
+        }
+      }
+    } 
+
+    function selectCurrent(id){
+      document.getElementById("currentLocation").value = id;
+    }
+    function filterPrevious() {
+      var input, filter, ul, li, a, i, match;
+      input = document.getElementById("previousLocation-search");
+      filter = input.value.toUpperCase();
+      div = document.getElementById("previousOptions");
+      a = div.getElementsByTagName("a");
+      match = 0;
+      for (i = 0; i < a.length; i++) {
+        if (match > 5){ break; }
+        txtValue = a[i].textContent || a[i].innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          a[i].style.display = "block";
+          match += 1;
+        } else {
+          a[i].style.display = "none";
+        }
+      }
+
+      if (match > 5){
+        for (i = 0; i < a.length; i++) {
+            a[i].style.display = "none";
+        }
+      }
+    } 
+
+    function selectPrevious(id){
+      document.getElementById("previousLocation").value = id;
+    }
     </script>
 </body>
 
