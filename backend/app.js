@@ -13,10 +13,10 @@ app.use(express.urlencoded({ extended: false }));
 
 // Create a connection pool using the connection information provided on bit.io.
 const pool = new Pool({
-  user: '', // User
+  user: 'HarleyMcDonald', // User
   host: 'db.bit.io', // Always db.bit.io
-  database: '', // public database name
-  password: '', // password
+  database: 'Matt-Bruce111/inv1', // public database name
+  password: 'v2_43hQz_rWPH2AtgmySamTsZAYgeCGw', // password
   port: 5432, 
   ssl: true,
 });
@@ -34,7 +34,7 @@ app.get("/inventory/viewall", async(req, res) => {
 // Get all items function
 async function getAllItems(){
   try{
-    const allItems = (await pool.query("SELECT * FROM ctm_inventory INNER JOIN address ON address_id = address_id ORDER BY item_id")).rows;
+    const allItems = (await pool.query("SELECT * FROM ctm_inventory INNER JOIN address ON address.address_id = ctm_inventory.address_id ORDER BY item_id")).rows;
     return allItems;
   } catch (err)
   {
