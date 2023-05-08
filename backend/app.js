@@ -137,3 +137,6 @@ async function deleteItem(req){
 app.listen(port, () => {
   console.log(`CTM Inventory App, listening on port ${port}`);
 });
+
+module.exports = app;
+module.exports = { getOneItem };
