@@ -234,3 +234,6 @@ async function getUserRole(user){
 }
 
 getUserRole()
+
+module.exports = app;
+module.exports = { getOneItem };
