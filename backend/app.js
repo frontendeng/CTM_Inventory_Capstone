@@ -5,12 +5,15 @@ const app = express();
 const bp = require('body-parser');
 require('dotenv').config();
 // Auth0 Connect Library
-const { auth } = require('express-openid-connect');
+const { auth, requiresAuth } = require('express-openid-connect');
 const port = 3000;
+
+// Import middleware
+const isAdmin = require('./middleware/auth.js');
 
 // Auth0 config
 const config = {
-  authRequired: false,
+  authRequired: true,
   auth0Logout: true,
   secret: process.env.SECRET,
   baseURL: process.env.BASEURL,
@@ -23,6 +26,7 @@ app.set('view engine', 'ejs');
 app.use(express.static("views"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 app.use(auth(config));
 
@@ -36,13 +40,9 @@ const pool = new Pool({
   ssl: true,
 });
 
-
 app.get('/', async (req, res) => {
   // Log whether the user is logged in or not
-  console.log(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out')
-  var user = req.oidc.user;
-  getUserRole(user)
-  // console.log(req.oidc.user)
+  //console.log(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out')
   res.render('viewall.ejs', { 
     data: await getAllItems(), 
     isAuthenticated: req.oidc.isAuthenticated(),
@@ -50,9 +50,18 @@ app.get('/', async (req, res) => {
   });
 });
 
+// The /profile route will show the user profile as JSON
+// app.get('/profile', requiresAuth(), (req, res) => {
+//   res.send(JSON.stringify(req.oidc.user, null, 2));
+// });
+
 // Get all item
 app.get("/inventory/viewall", async(req, res) => {
-  res.render('viewall.ejs', { data: await getAllItems() });
+  res.render('viewall.ejs', { 
+    data: await getAllItems(),
+    isAuthenticated: req.oidc.isAuthenticated(),
+    user: req.oidc.user
+  });
 });
 
 // Get all items function
@@ -90,18 +99,17 @@ async function getOneItem(req){
 
 
 // Add item
-app.get('/inventory/add', async (req, res) => {
+app.get('/inventory/add', isAdmin, async (req, res) => {
   res.render('add.ejs', {
     isAuthenticated: req.oidc.isAuthenticated(),
     user: req.oidc.user
   });
 });
 
-app.post('/inventory/add', async (req, res) => {
+app.post('/inventory/add', isAdmin, async (req, res) => {
   console.log(req.body)
   await addItem(req);
-  res.render('viewall.ejs', { data: await getAllItems() });
-  
+  res.redirect('/');
 });
 
 async function addItem(req){
@@ -120,7 +128,7 @@ async function addItem(req){
 
 
 // Edit Item
-app.get('/inventory/edit/:id', async (req, res) => {
+app.get('/inventory/edit/:id', isAdmin, async (req, res) => {
   res.render('edit.ejs', { 
     data: await getOneItem(req),
     isAuthenticated: req.oidc.isAuthenticated(),
@@ -128,7 +136,7 @@ app.get('/inventory/edit/:id', async (req, res) => {
   });
 });
 
-app.post('/edit_confirm', async (req, res) => {
+app.post('/edit_confirm', isAdmin, async (req, res) => {
   var body = req.body;
   console.log(body);
   await editItemData(body.id, body.itemdesc,/* body.condition,*/ body.qty, body.possession, body.category);
@@ -146,9 +154,8 @@ async function editItemData(id, itemDesc, qty, possession, category){
   return invData;
 }
 
-
 // Delete an item
-app.get('/inventory/delete/:id', async (req, res) => {
+app.get('/inventory/delete/:id', isAdmin, async (req, res) => {
   res.render('delete.ejs', { 
     data: await getOneItem(req),
     isAuthenticated: req.oidc.isAuthenticated(),
@@ -156,7 +163,7 @@ app.get('/inventory/delete/:id', async (req, res) => {
   });
 });
 
-app.post('/delete_confirm', async (req, res) => {
+app.post('/delete_confirm', isAdmin, async (req, res) => {
   await deleteItem(req)
   res.redirect('/');
 });
@@ -172,69 +179,7 @@ async function deleteItem(req){
   }
 }
 
-
-
+// Start the Server 
 app.listen(port, () => {
   console.log(`CTM Inventory App, listening on port ${port}`);
 });
-
-
-// Auth0 ManagementAPI Token
-async function getManagementToken(){
-  var options = {
-    method: 'POST',
-    url: 'https://dev-lbh35xzftxelxza1.us.auth0.com/oauth/token',
-    headers: {'content-type': 'application/x-www-form-urlencoded'},
-    data: new URLSearchParams({
-      grant_type: 'client_credentials',
-      client_id: 'ZOFyCniuZ1GI85bzfhbnq6Wl0SLQiRb2',
-      client_secret: 'AXIyKkwvJr-Oh62VNvIkAwI8y5jiq-7TTOc_3YFqYkZJzAQHJdrvBP5GoTBNHJv6',
-      audience: 'https://dev-lbh35xzftxelxza1.us.auth0.com/api/v2/'
-    })
-  };
-  
-  var token;
-  
-  // Make request to Auth0 Management API
-  const response = await axios.request(options)
-  
-  // Get token from response
-  token = response.data.access_token;
-  
-  // Return token
-  return token;
-}
-
-// Get a user's role
-async function getUserRole(user){
-  // Fetch the Auth0 Management API token
-  var token = await getManagementToken()
-  //console.log(token)
-  
-  // If user is logged in, get their user id
-  if(user){
-    var userId = user.sub
-    
-    const options = {
-      url: "https://dev-lbh35xzftxelxza1.us.auth0.com/api/v2/users/" + userId,
-      method: 'GET',
-      headers: { 
-        'content-type': 'application/json', 
-        'authorization': 'Bearer ' + token
-      }
-    }
-
-    // Make request to Auth0 Management API 
-    const response = await axios.request(options)
-    console.log(response.data.app_metadata)
-  } else {
-    console.log("No user")
-  }
-  
-
-}
-
-getUserRole()
-
-module.exports = app;
-module.exports = { getOneItem };
