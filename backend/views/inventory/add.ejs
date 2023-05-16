@@ -59,14 +59,19 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item dropdown">
+                          <% if(!isAuthenticated) { %>
+                            <a class="nav-link second-text fw-bold" href="/login">Login</a>
+                        <% } else { %>
                             <a class="nav-link dropdown-toggle second-text fw-bold" href="#" id="navbarDropdown"
                                 role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user me-2"></i>User
+                                <i class="fas fa-user me-2"></i>
+                                <%= user.nickname %>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="#">Profile</a></li>
-                                <li><a class="dropdown-item" href="#">Logout</a></li>
+                                <li><a class="dropdown-item" href="/logout">Logout</a></li>
                             </ul>
+                        <% } %> 
                         </li>
                     </ul>
                 </div>
@@ -151,25 +156,25 @@
                         </div>
 
                   </div>
-                      
+   
                   <div class="form-group col-md-18">
-                      <label for="previousLocation" class="form-label">Previous Location</label>
-                      <div id="previousOptions">
-                        <input class="form-control" id="previousLocation-search" placeholder="Type to search..." onkeyup="filterPrevious()">
-                        
-                          <% for(var i = 0; i < address.length; i++) {
-                          var addressStr =  address[i].street_line_1
-                          if (address[i].street_line_2 !== null){
-                            addressStr += ' ' + address[i].street_line_2
-                          }
-                          addressStr += ', ' + address[i].city + ', ' + address[i].state + ', ' + address[i].postcode
-                          if(address[i].country !== null){
-                            addressStr += ', ' + address[i].country
-                          }
-                          %>
-                          <a class="address-option" onclick="selectPrevious('<%= address[i].address_id %>')" ><%= addressStr %></a><% } %>
-                        </div>
-                        <input type="hidden" name="previousLocation" id="previousLocation">
+                    <label for="previousLocation" class="form-label">Previous Location</label>
+                    <div id="previousOptions">
+                      <input class="form-control" id="previousLocation-search" placeholder="Type to search..." onkeyup="filterPrevious()">
+                      
+                        <% for(var i = 0; i < address.length; i++) {
+                        var addressStr =  address[i].street_line_1
+                        if (address[i].street_line_2 !== null){
+                          addressStr += ' ' + address[i].street_line_2
+                        }
+                        addressStr += ', ' + address[i].city + ', ' + address[i].state + ', ' + address[i].postcode
+                        if(address[i].country !== null){
+                          addressStr += ', ' + address[i].country
+                        }
+                        %>
+                        <a class="address-option" onclick="selectPrevious('<%= address[i].address_id %>')" ><%= addressStr %></a><% } %>
+                      </div>
+                      <input type="hidden" name="previousLocation" id="previousLocation">
                   </div>
 
                   <div class="form-group col-md-6">
@@ -185,6 +190,7 @@
                   <br>
                   <div class="mx-auto col-10 col-md-8 col-lg-6">
                     <button type="submit" class="btn btn-success text">Submit</button>
+                    <button type="submit" class="btn btn-success text"><a href="/" style="text-decoration: none; color: white;">Inventory</a></button>
                   </div>
                 </form>
             </div>
@@ -206,6 +212,15 @@
     toggleButton.onclick = function () {
         el.classList.toggle("toggled");
     }; 
+
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+          var output = document.getElementById('preview');
+          output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    };
 
     function filterCurrent() {
       var input, filter, ul, li, a, i, match;
@@ -263,14 +278,7 @@
     function selectPrevious(id){
       document.getElementById("previousLocation").value = id;
     }
-
-    function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function() {
-          var output = document.getElementById('preview');
-          output.src = reader.result;
-        };
-        reader.readAsDataURL(event.target.files[0]);
-      }
     </script>
 </body>
+
+</html>
