@@ -30,7 +30,7 @@
                 <a href="#" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i
                         class="fas fa-gift me-2"></i>Inventory</a>
                 <a href="#" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i
-                        class="fas fa-users me-2"></i>User Management</a>
+                        class="fas fa-users me-2"></i>Inventory Management</a>
                 <a href="#" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i
                         class="fas fa-map-marker-alt me-2"></i>Location Log</a>
                 <a href="#" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold"><i
@@ -72,25 +72,43 @@
                 </div>
             </nav>
 
+            <!-- Page Breadcrumb -->
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="item_read_all.html">Home</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Inventory Management</li>
+                </ol>
+              </nav>
+            
+            <!-- User Managment Header -->
             <div class="container-fluid px-4">
-
                 <div class="row my-5">
-                    <h3 class="fs-4 mb-3">Equipment</h3>
+                    <div class="text-center text-success">
+                        <div class="card">
+                          <div class="card-header">
+                            <h1>Inventory Management</h1>
+                          </div> 
+                        </div>
+                    </div>
+                  <br>
+
+
+
                     <div class="col">
                         <a href="item_add.html" class="btn btn-success mb-3"> <i class="fa-solid fa-plus"></i> Add Equipment</a>
+
                         <table class="table bg-white rounded shadow-sm  table-hover">
                         <table class="table bg-white rounded shadow-sm  table-hover">
                             <thead>
                                 <tr>
                                     <th scope="col" width="50">ID</th>
                                     <th scope="col" width="200">Item</th>
-                                    
                                     <th scope="col"width="100">Quantity</th>
-                                    <th scope="col">Assigned to</th>
-                                    <th scope="col">Current location</th>
-                                    <th scope="col">Last location</th>
-                                    
-                                    <th scope="col" width="150">Actions</th>
+                                    <th scope="col"width="250">Assigned to</th>
+                                    <th scope="col"width="250">Current location</th>
+                                    <th scope="col"width="250">Last location</th>
+                                    <th scope="col" width="125">Actions</th>
+                                    <th scope="col" width="100"></th>
                                     
                                 </tr>
                             </thead>
@@ -106,14 +124,19 @@
                                     
                                     <td>
                                         <!-- view button -->
-                                        <a href="" class="link-dark"><i class="fa-solid fa-eye fs-5 me-3" ></i></a>
+                                        <a href="" class="link-dark"><i class="fa-solid fa-eye fs-4 me-3 " ></i></a>
                                         <!-- pen button -->
-                                        <a href="" class="link-dark"><i class="fa-solid fa-pen-to-square fs-5 me-3"></i></a>
+                                        <a href="" class="link-dark"><i class="fa-solid fa-pen-to-square fs-4 me-3"></i></a>
                                         <!-- trash  button-->
-                                        <a href="" class="link-dark"><i class="fa-solid fa-trash fs-5"></i></a>
-                                     
-                
+                                        <a href="" class="link-dark"><i class="fa-solid fa-trash fs-4"></i></a>
                                     </td>
+
+                                    <!-- Request button -->
+                                    <td>
+                                        <a class="btn btn-outline-success btn-sm" href="request_item.html" role="button">Request</a>
+                                    </td>
+
+
                                 </tr>
                                 <tr>
                                     <th scope="row">2</th>

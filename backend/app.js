@@ -3,6 +3,7 @@ const axios = require("axios").default;
 const { Pool } = require('pg');
 const app = express();
 const bp = require('body-parser');
+require('dotenv').config();
 // Auth0 Connect Library
 const { auth, requiresAuth } = require('express-openid-connect');
 const port = 3000;
@@ -14,10 +15,10 @@ const isAdmin = require('./middleware/auth.js');
 const config = {
   authRequired: true,
   auth0Logout: true,
-  secret: 'B-ZB8p-PRnwpeI9OzY5IsgySEjMfJ8-TtIrINFHL5BXDvhjY3vepG6P00Tbfx43M',
-  baseURL: 'http://localhost:3000',
-  clientID: '4Zj2fsyNdDBYTi8Xm4nD5ab4fkOtDBG1',
-  issuerBaseURL: 'https://dev-lbh35xzftxelxza1.us.auth0.com'
+  secret: process.env.SECRET,
+  baseURL: process.env.BASEURL,
+  clientID: process.env.CLIENTID,
+  issuerBaseURL: process.env.ISSUER
 };
 
 // Set view engine to ejs
@@ -31,11 +32,11 @@ app.use(auth(config));
 
 // Create a connection pool using the connection information provided on bit.io.
 const pool = new Pool({
-  user: 'Matt-Bruce111', // User
-  host: 'db.bit.io', // Always db.bit.io
-  database: 'Matt-Bruce111/inv1', // public database name
-  password: 'v2_43hHv_iBQs3uJrD5STNu6rtnJvrGA', // password
-  port: 5432, 
+  user: process.env.USER, // User
+  host: process.env.HOST, // Always db.bit.io
+  database: process.env.DATABASE, // public database name
+  password: process.env.PASSWORD, // password
+  port: process.env.PORT, 
   ssl: true,
 });
 
