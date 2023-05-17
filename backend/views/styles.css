@@ -25,10 +25,13 @@
   border-radius: 100%;
 }
 
-.address-option {
+.address-radio {
   display: none;
 }
 
+.address-option {
+  display: none;
+}
 
 #sidebar-wrapper {
   min-height: 100vh;

@@ -43,7 +43,7 @@ app.get('/', async (req, res) => {
    var user = req.oidc.user;
    getUserRole(user)
    // console.log(req.oidc.user)
-   res.render('viewall.ejs', { 
+   res.render('inventory/viewall.ejs', { 
      data: await getAllItems(), 
      isAuthenticated: req.oidc.isAuthenticated(),
      user: req.oidc.user
@@ -52,7 +52,7 @@ app.get('/', async (req, res) => {
 
 // Get all item
 app.get("/inventory/viewall", async(req, res) => {
-  res.render('viewall.ejs', { data: await getAllItems() });
+  res.render('inventory/viewall.ejs', { data: await getAllItems() });
 });
 
 // Get all items function
@@ -68,7 +68,7 @@ async function getAllItems(){
 
 // Get one item
 app.get("/inventory/viewone/:id", async(req, res) => {
-  res.render('viewone.ejs', { 
+  res.render('inventory/viewone.ejs', { 
     data: await getOneItem(req),
     isAuthenticated: req.oidc.isAuthenticated(),
     user: req.oidc.user
@@ -79,7 +79,7 @@ app.get("/inventory/viewone/:id", async(req, res) => {
 async function getOneItem(req){
   const { id } = req.params;
   try{
-    const getItem = (await pool.query("SELECT * FROM ctm_inventory INNER JOIN address ON address_id = address_id WHERE item_id=$1", [id])).rows;
+    const getItem = (await pool.query("SELECT * FROM ctm_inventory INNER JOIN address ON ctm_inventory.address_id = address.address_id WHERE item_id=$1", [id])).rows;
     //console.log(getItem);
     return getItem;
   } catch (err)
@@ -91,7 +91,7 @@ async function getOneItem(req){
 
 // Add item
 app.get('/inventory/add', async (req, res) => {
-  res.render('add.ejs', {
+  res.render('inventory/add.ejs', {
     isAuthenticated: req.oidc.isAuthenticated(),
     user: req.oidc.user,
     address: await getAllAddresses() 
@@ -133,7 +133,7 @@ async function addItem(req){
 
 // Edit Item
 app.get('/inventory/edit/:id', async (req, res) => {
-  res.render('edit.ejs', { 
+  res.render('inventory/edit.ejs', { 
     data: await getOneItem(req),
     isAuthenticated: req.oidc.isAuthenticated(),
     user: req.oidc.user, 
@@ -166,7 +166,7 @@ async function editItemData(id, itemDesc,/* condition, address_id,*/ qty, posses
 
 // Delete an item
 app.get('/inventory/delete/:id', async (req, res) => {
-  res.render('delete.ejs', { 
+  res.render('inventory/delete.ejs', { 
     data: await getOneItem(req),
     isAuthenticated: req.oidc.isAuthenticated(),
     user: req.oidc.user
