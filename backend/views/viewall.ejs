@@ -95,7 +95,6 @@
                                     <th scope="col">Category</th>
                                     <th scope="col">Assigned to</th>
                                     <th scope="col">Condition</th>
-                                    <th scope="col">Address</th>
                                     
                                     <th scope="col" width="150">Actions</th>
                                     
@@ -103,16 +102,7 @@
                             </thead>
                             <tbody id="item-list">
                               <!-- Loop through fetched data and build the inventory list -->
-                                <% for(var i = 0; i < data.length; i++) {
-                                    var address =  data[i].street_line_1
-                                    if (data[i].street_line_2 !== null){
-                                        address += ' ' + data[i].street_line_2
-                                    }
-                                    address += ', ' + data[i].city + ', ' + data[i].state + ', ' + data[i].postcode
-                                    if(data[i].country !== null){
-                                        address += ' ' + data[i].country
-                                    }
-                                    %>
+                                <% for(var i = 0; i < data.length; i++) {%>
                                   <tr class="item-row">
                                     <th scope="row"><%= data[i].item_id %></th>
                                     <td><%= data[i].item_desc %></td>
@@ -120,7 +110,6 @@
                                     <td><%= data[i].category %></td>
                                     <td><%= data[i].possession %></td>
                                     <td><%= data[i].condition %></td>
-                                    <td><%= address %></td>
         
                                     <td>
                                         <!-- view button -->
