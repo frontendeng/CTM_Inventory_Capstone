@@ -60,13 +60,14 @@ app.get("/inventory/viewall", async(req, res) => {
   res.render('viewall.ejs', { 
     data: await getAllItems(),
     isAuthenticated: req.oidc.isAuthenticated(),
-    user: req.oidc.user });
+    user: req.oidc.user
+  });
 });
 
 // Get all items function
 async function getAllItems(){
   try{
-    const allItems = (await pool.query("SELECT * FROM ctm_inventory INNER JOIN address ON address.address_id = ctm_inventory.address_id ORDER BY item_id")).rows;
+    const allItems = (await pool.query("SELECT * FROM ctm_inventory ORDER BY item_id")).rows;
     return allItems;
   } catch (err)
   {
@@ -87,7 +88,7 @@ app.get("/inventory/viewone/:id", async(req, res) => {
 async function getOneItem(req){
   const { id } = req.params;
   try{
-    const getItem = (await pool.query("SELECT * FROM ctm_inventory INNER JOIN address ON ctm_inventory.address_id = address.address_id WHERE item_id=$1", [id])).rows;
+    const getItem = (await pool.query("SELECT * FROM ctm_inventory WHERE item_id=$1", [id])).rows;
     //console.log(getItem);
     return getItem;
   } catch (err)
@@ -98,38 +99,26 @@ async function getOneItem(req){
 
 
 // Add item
-app.get('/inventory/add', async (req, res) => {
+app.get('/inventory/add', isAdmin, async (req, res) => {
   res.render('add.ejs', {
     isAuthenticated: req.oidc.isAuthenticated(),
-    user: req.oidc.user,
-    address: await getAllAddresses() 
+    user: req.oidc.user
   });
 });
 
-async function getAllAddresses(){
-  try{
-    const allAddresses = (await pool.query("SELECT * FROM address ORDER BY city")).rows;
-    return allAddresses;
-  } catch (err)
-  {
-    console.error(err.message) 
-  }
-}
-
-app.post('/inventory/add', async (req, res) => {
+app.post('/inventory/add', isAdmin, async (req, res) => {
   console.log(req.body)
   await addItem(req);
-  res.render('viewall.ejs', { data: await getAllItems() });
-  
+  res.redirect('/');
 });
 
 async function addItem(req){
   console.log("This is addItem", req.body);
   var invData = [];
   try{
-    const {item_desc, category, possession, condition, qty, currentLocation, previousLocation} = req.body;
-    const newItem = await pool.query("INSERT INTO ctm_inventory (item_desc, category, possession, condition, qty, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [item_desc, category, possession, condition, qty, currentLocation]);
-    
+    const {item_desc, category, possession, condition, qty} = req.body;
+    const newItem = await pool.query("INSERT INTO ctm_inventory (item_desc, category, possession, condition, qty) VALUES ($1, $2, $3, $4, $5) RETURNING *", [item_desc, category, possession, condition, qty]);
+  
   } catch (err)
     {
        console.error(err.message) 
@@ -139,12 +128,11 @@ async function addItem(req){
 
 
 // Edit Item
-app.get('/inventory/edit/:id', async (req, res) => {
+app.get('/inventory/edit/:id', isAdmin, async (req, res) => {
   res.render('edit.ejs', { 
     data: await getOneItem(req),
     isAuthenticated: req.oidc.isAuthenticated(),
-    user: req.oidc.user, 
-    address: await getAllAddresses() 
+    user: req.oidc.user
   });
 });
 
@@ -155,11 +143,11 @@ app.post('/edit_confirm', isAdmin, async (req, res) => {
   res.redirect('/');
 });
 
-async function editItemData(id, itemDesc,/* condition, address_id,*/ qty, possession, category){
+async function editItemData(id, itemDesc, qty, possession, category){
   var invData = [];
   // Select everything from inventory table
   try{
-    invData =  (await pool.query(`UPDATE ctm_inventory SET item_desc = '${itemDesc}', category = '${category}',`/* 'condition' = ${condition},*/+` 'address_id' = ${address_id}, possession = '${possession}', qty = ${qty} WHERE item_id = ${id} ;` )).rows;}
+  invData =  (await pool.query(`UPDATE ctm_inventory SET item_desc = '${itemDesc}', category = '${category}',`/* 'condition' = ${condition},*/ +`possession = '${possession}', qty = ${qty} WHERE item_id = ${id} ;` )).rows;}
   catch(e){
     throw e;
   }
@@ -167,7 +155,7 @@ async function editItemData(id, itemDesc,/* condition, address_id,*/ qty, posses
 }
 
 // Delete an item
-app.get('/inventory/delete/:id', async (req, res) => {
+app.get('/inventory/delete/:id', isAdmin, async (req, res) => {
   res.render('delete.ejs', { 
     data: await getOneItem(req),
     isAuthenticated: req.oidc.isAuthenticated(),
