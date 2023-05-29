@@ -1,3 +1,7 @@
+body {
+  background: #eeece9;
+}
+
 :root {
   --main-bg-color: #009d63;
   --main-text-color: #e8dd58;
@@ -102,4 +106,17 @@ i#menu-toggle {
   background-clip: padding-box;
   border: 1px solid rgba(0,0,0,.15);
   border-radius: 0.25rem;
+}
+tr th{
+  background-color: #198754 !important; 
+  color: white; 
+}  
+
+
+.container {
+  max-width: 650px;
+}
+
+.breadcrumb {
+  padding: 0px 20px !important;
 }
