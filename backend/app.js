@@ -66,7 +66,12 @@ app.get("/inventory/viewall", async(req, res) => {
 // Get all items function
 async function getAllItems(){
   try{
-    const allItems = (await pool.query("SELECT * FROM ctm_inventory INNER JOIN address ON address.address_id = ctm_inventory.address_id ORDER BY item_id")).rows;
+    const allItems = (await pool.query("SELECT item_id, item_desc, category, purchase_date, condition, item_qty, keywords, " +
+    "u.first_name AS first_name, u.last_name AS last_name, c.street_line_1 AS c_street_line_1, c.street_line_2 AS c_street_line_2, c.city AS c_city," + 
+    "c.state AS c_state, c.country AS c_country, c.postcode AS c_postcode, p.street_line_1 AS p_street_line_," +
+    "p.street_line_2 AS p_street_line_2, p.city AS p_city, p.state AS p_state, p.country AS p_country, p.postcode AS p_postcode," +
+    "FROM inventory AS i JOIN users u ON u.user_id = i.user_id JOIN address c ON c.address_id = i.current_address" +
+    "LEFT JOIN address p ON p.address_id = i.previous_address  ORDER BY item_id;")).rows;
     return allItems;
   } catch (err)
   {
@@ -87,7 +92,12 @@ app.get("/inventory/viewone/:id", async(req, res) => {
 async function getOneItem(req){
   const { id } = req.params;
   try{
-    const getItem = (await pool.query("SELECT * FROM ctm_inventory INNER JOIN address ON ctm_inventory.address_id = address.address_id WHERE item_id=$1", [id])).rows;
+    const getItem = (await pool.query("SELECT item_id, item_desc, category, purchase_date, condition, item_qty, keywords, " +
+    "u.first_name AS first_name, u.last_name AS last_name, c.street_line_1 AS c_street_line_1, c.street_line_2 AS c_street_line_2, c.city AS c_city," + 
+    "c.state AS c_state, c.country AS c_country, c.postcode AS c_postcode, p.street_line_1 AS p_street_line_," +
+    "p.street_line_2 AS p_street_line_2, p.city AS p_city, p.state AS p_state, p.country AS p_country, p.postcode AS p_postcode," +
+    "FROM inventory AS i JOIN users u ON u.user_id = i.user_id JOIN address c ON c.address_id = i.current_address" +
+    "LEFT JOIN address p ON p.address_id = i.previous_address WHERE i.item_id=$1", [id])).rows;
     //console.log(getItem);
     return getItem;
   } catch (err)
@@ -102,7 +112,8 @@ app.get('/inventory/add', async (req, res) => {
   res.render('inventory/add.ejs', {
     isAuthenticated: req.oidc.isAuthenticated(),
     user: req.oidc.user,
-    address: await getAllAddresses() 
+    address: await getAllAddresses(),
+    users: await getAllUsers()
   });
 });
 
@@ -110,6 +121,16 @@ async function getAllAddresses(){
   try{
     const allAddresses = (await pool.query("SELECT * FROM address ORDER BY city")).rows;
     return allAddresses;
+  } catch (err)
+  {
+    console.error(err.message) 
+  }
+}
+
+async function getAllUsers(){
+  try{
+    const allUsers = (await pool.query("SELECT user_id, first_name, last_name FROM users ORDER BY first_name")).rows;
+    return allUsers;
   } catch (err)
   {
     console.error(err.message) 
@@ -130,8 +151,8 @@ async function addItem(req){
   console.log("This is addItem", req.body);
   var invData = [];
   try{
-    const {item_desc, category, possession, condition, qty, currentaddress, previousLocation} = req.body;
-    const newItem = await pool.query("INSERT INTO ctm_inventory (item_desc, category, possession, condition, qty, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [item_desc, category, possession, condition, qty, parseInt(currentaddress)]);
+    const {item_desc, category, purchase_date, condition, item_qty, user_id, current_address, previous_address, keywords} = req.body;
+    const newItem = await pool.query("INSERT INTO inventory (item_desc, category, purchase_date, condition, item_qty, user_id, current_address, previous_address, keywords) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *", [item_desc, category, purchase_date, condition, parseInt(item_qty), user_id, parseInt(current_address), parseInt(previous_address), keywords]);
     
   } catch (err)
     {
@@ -147,23 +168,23 @@ app.get('/inventory/edit/:id', async (req, res) => {
     data: await getOneItem(req),
     isAuthenticated: req.oidc.isAuthenticated(),
     user: req.oidc.user, 
-    address: await getAllAddresses() 
+    address: await getAllAddresses(),
+    users: await getAllUsers()
   });
 });
 
 app.post('/edit_confirm', isAdmin, async (req, res) => {
   var body = req.body;
-  console.log(body);
-  console.log(body.currentaddress)
-  await editItemData(body.id, body.itemdesc, body.currentaddress, /* body.condition,*/ body.qty, body.possession, body.category);
+  await editItemData(req);
   res.redirect('/');
 });
 
-async function editItemData(id, itemDesc,/*condition, */ currentaddress, qty, possession, category){
+async function editItemData(req){
   var invData = [];
   // Select everything from inventory table
+  const {item_desc, category, purchase_date, condition, item_qty, user_id, current_address, previous_address, keywords} = req.body;
   try{
-    invData =  (await pool.query(`UPDATE ctm_inventory SET item_desc = '${itemDesc}', category = '${category}',`/* 'condition' = ${condition},*/+` address_id = ${currentaddress}, possession = '${possession}', qty = ${qty} WHERE item_id = ${id} ;` )).rows;}
+    invData =  (await pool.query(`UPDATE inventory SET item_desc = '${item_desc}', category = '${category}', purchase_date = ${purchase_date} 'condition' = ${condition}, item_qty = ${item_qty}, user_id = '${user_id}', current_address = ${current_address}, previous_address = ${previous_address}, keywords = '${keywords}' WHERE item_id = ${id} ;` )).rows;}
   catch(e){
     throw e;
   }
@@ -187,7 +208,7 @@ app.post('/delete_confirm', isAdmin, async (req, res) => {
 async function deleteItem(req){
   try{
     const id = req.body.id; 
-    const deleteItem = await pool.query("DELETE FROM ctm_inventory WHERE item_id=$1", [id]);
+    const deleteItem = await pool.query("DELETE FROM inventory WHERE item_id=$1", [id]);
     //res.json("Item was successfully deleted!");
   } catch (err)
   {

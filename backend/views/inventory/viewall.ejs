@@ -91,12 +91,11 @@
                                 <tr>
                                     <th scope="col" width="50">ID</th>
                                     <th scope="col" width="200">Item</th>
-                                    <th scope="col"width="100">Quantity</th>
                                     <th scope="col">Category</th>
-                                    <th scope="col">Assigned to</th>
                                     <th scope="col">Condition</th>
-                                    <th scope="col">Address</th>
-                                    
+                                    <th scope="col"width="100">Quantity</th>
+                                    <th scope="col">Assigned to</th>
+                                    <th scope="col">Current Address</th>
                                     <th scope="col" width="150">Actions</th>
                                     
                                 </tr>
@@ -104,23 +103,23 @@
                             <tbody id="item-list">
                               <!-- Loop through fetched data and build the inventory list -->
                                 <% for(var i = 0; i < data.length; i++) {
-                                    var address =  data[i].street_line_1
-                                    if (data[i].street_line_2 !== null){
-                                        address += ' ' + data[i].street_line_2
+                                    var c_address =  data[i].c_street_line_1
+                                    if (data[i].c_street_line_2 !== null){
+                                        c_address += ' ' + data[i].c_street_line_2
                                     }
-                                    address += ', ' + data[i].city + ', ' + data[i].state + ', ' + data[i].postcode
-                                    if(data[i].country !== null){
-                                        address += ' ' + data[i].country
+                                    c_address += ', ' + data[i].c_city + ', ' + data[i].c_state + ', ' + data[i].c_postcode
+                                    if(data[i].c_country !== null){
+                                        c_address += ' ' + data[i].c_country
                                     }
                                     %>
                                   <tr class="item-row">
-                                    <th scope="row"><%= data[i].item_id %></th>
+                                    <td><%= data[i].item_id %></td>
                                     <td><%= data[i].item_desc %></td>
-                                    <td><%= data[i].qty %></td>
                                     <td><%= data[i].category %></td>
-                                    <td><%= data[i].possession %></td>
                                     <td><%= data[i].condition %></td>
-                                    <td><%= address %></td>
+                                    <td><%= data[i].item_qty %></td>
+                                    <td><%= data[i].first_name + " " + data[i].last_name %></td>
+                                    <td><%= c_address %></td>
         
                                     <td>
                                         <!-- view button -->

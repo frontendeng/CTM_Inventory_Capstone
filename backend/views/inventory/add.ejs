@@ -82,7 +82,7 @@
              <div class="container mt-5 mx-auto col-10 col-md-8 col-lg-6"> 
                 <h1>Add Equipment</h1>
 
-                <form action="/inventory/add" method="POST">
+                <form action="/inventory/add" method="POST" onkeydown="return event.key != 'Enter';">
                   <div class="row">
                     <!-- <div class="form-group col-md-3">
                       <label for="id">ID:</label>
@@ -117,11 +117,12 @@
                   </div>
 
                   <div class="form-group col-md-6">
-                    <label for="possession">Assigned to:</label>
-                     <select id="possession" name="possession" class="form-control">
-                        <option value="">Not assigned</option>
-                        <option value="Jenny">Jenny</option>
-                        <option value="Sathy">Sathy</option>
+                    <label for="user_id">Assigned to:</label>
+                     <select id="user_id" name="user_id" class="form-control">
+                      <option value="">Not assigned</option>
+                      <% for(var i = 0; i < users.length; i++){%>
+                        <option value="<%=users[i].user_id%>"><%= users[i].first_name %> <%= users[i].last_name %></option>
+                      <% } %>
                       </select>
                   </div>
 
@@ -139,7 +140,7 @@
                           addressStr += ', ' + address[i].country
                         }
                         %>
-                        <input type="radio" class="address-radio" name="currentaddress" value="<%= address[i].address_id %>" id="c-<%= address[i].address_id %>">
+                        <input type="radio" class="address-radio" name="current_address" value="<%= address[i].address_id %>" id="c-<%= address[i].address_id %>">
                         <label class="address-option" for="c-<%= address[i].address_id %>" ><%= addressStr %></label>
                         <% } %></div>
 
@@ -163,25 +164,26 @@
                           addressStr += ', ' + address[i].country
                         }
                         %>
-                        <input type="radio" class="address-radio" name="previous-address" value="<%= address[i].address_id %>" id="p-<%= address[i].address_id %>">
+                        <input type="radio" class="address-radio" name="previous_address" value="<%= address[i].address_id %>" id="p-<%= address[i].address_id %>">
                         <label class="address-option" for="p-<%= address[i].address_id %>" ><%= addressStr %></label><% } %>
                     </div>
                 </div>
 
                   <div class="form-group col-md-6">
-                    <label for="message">Notes:</label>
-                    <textarea class="form-control" id="notes" rows="5" placeholder="Enter notes"></textarea>
+                    <label for="keywords">Keywords:</label>
+                    <textarea class="form-control" id="keywords" rows="5" placeholder="Enter keywords"></textarea>
                   </div>
 
+                  <!--
                   <div class="form-group">
                     <label for="image">Upload Image:</label>
                     <input type="file" class="form-control-file" id="image" onchange="previewImage(event)">
-                  </div>
+                  </div>-->
 
                   <br>
                   <div class="mx-auto col-10 col-md-8 col-lg-6">
                     <button type="submit" class="btn btn-success text">Submit</button>
-                    <button type="submit" class="btn btn-success text"><a href="/" style="text-decoration: none; color: white;">Inventory</a></button>
+                    <button href="/" style="text-decoration: none; color: white;">Inventory</button>
                   </div>
                 </form>
             </div>

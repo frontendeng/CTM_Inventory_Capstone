@@ -84,19 +84,51 @@
                     <div class="col">
                         
                           
-                        <form method="post" action="/edit_confirm">
+                        <form method="post" action="/edit_confirm" onkeydown="return event.key != 'Enter';">
                             <input type="number" name="id" value="<%= data[0].item_id %>" hidden>
                             <label for="itemdesc">Item:</label><br>
                             <input type="text" id="itemdesc" name="itemdesc" value="<%= data[0].item_desc%>">
                             <br>
                             <br>
 
-                            <label for="qty">Quantity:</label><br>
-                            <input type="text" id="qty" name="qty"  value="<%= data[0].qty%>">
+                            <label for="category">Category:</label><br>
+                            <input type="text" id="category" name="category"  value="<%= data[0].category%>">
+
                             <br><br>
 
-                            <label for="possession">Assigned To:</label><br>
-                            <input type="text" id="possession" name="possession"  value="<%= data[0].possession%>">
+                            <label for="purchase_date">Purchase Date:</label><br>
+                            <input type="text" id="purchase_date" name="purchase_date"  value="<%= data[0].purchase_date%>">
+                            
+                            <br><br>
+
+                            <div class="form-group col-md-6">
+                              <label for="condition">Condition:</label>
+                               <select id="condition" name="condition" class="form-control">
+                                  <option value="" <%= (data[0].condition === "") ? "selected" :%>>Not assigned</option>
+                                  <option value="New" <%= (data[0].condition === "New") ? "selected" :%>>New</option>
+                                  <option value="Used" <%= (data[0].condition === "Used") ? "selected" :%>>Used</option>
+                                  <option value="Broken" <%= (data[0].condition === "Broken") ? "selected" :%>>Broken</option>
+                                </select>
+                            </div>
+                            
+                            <br><br>
+
+                            <label for="item_qty">Quantity:</label><br>
+                            <input type="text" id="item_qty" name="item_qty"  value="<%= data[0].item_qty%>">
+                            
+                            <br><br>
+
+                            <div class="form-group col-md-6">
+                              <label for="user_id">Assigned to:</label>
+                               <select id="user_id" name="user_id" class="form-control">
+                                <option value="">Not assigned</option>
+                                <% for(var i = 0; i < users.length; i++){
+                                  var selected = ""
+                                  if (data[0].user_id === users[i].user_id){ selected = "selected"}%>
+                                  <option value="<%=users[i].user_id%>" <%= selected %> ><%= users[i].first_name %> <%= users[i].last_name %></option>
+                                <% } %>
+                                </select>
+                            </div>
 
                             <div class="form-group col-md-18">
                                 <label for="locationAdd" class="form-label">Current Location</label>
@@ -119,7 +151,7 @@
                                       display = '-checked'
                                     }
                                     %>
-                                    <input type="radio" class="address-radio<%= display%>" name="currentaddress" value="<%= address[i].address_id %>" id="c-<%= address[i].address_id %>"  <%= checked %> >
+                                    <input type="radio" class="address-radio<%= display%>" name="current_address" value="<%= address[i].address_id %>" id="c-<%= address[i].address_id %>"  <%= checked %> >
                                     <label class="address-option<%= display%>" for="c-<%= address[i].address_id %>" ><%= addressStr %></label>
                                     <% } %>
                                 </div>
@@ -157,17 +189,17 @@
                                         display = '-checked'
                                       }
                                       %>
-                                      <input type="radio" class="address-radio<%= display%>" name="previous-address" value="<%= address[i].address_id %>" id="p-<%= address[i].address_id %>"  <%= checked %> >
+                                      <input type="radio" class="address-radio<%= display%>" name="previous_address" value="<%= address[i].address_id %>" id="p-<%= address[i].address_id %>"  <%= checked %> >
                                       <label class="address-option<%= display%>" for="p-<%= address[i].address_id %>" ><%= addressStr %></label><% } %>
                                   </div>
-                              </div>
-
-                            <br><br>
-
-                            <label for="category">Category:</label><br>
-                            <input type="text" id="category" name="category"  value="<%= data[0].category%>">
-                                
+                              </div>                                
                             
+                            <br><br>
+                            <div class="form-group col-md-6">
+                              <label for="keywords">Keywords:</label>
+                              <textarea class="form-control" id="keywords" rows="5" placeholder="Enter keywords"><%= data[0].keywords %></textarea>
+                            </div>
+
                             <br><br>
 
                            <div class="mx-auto ">

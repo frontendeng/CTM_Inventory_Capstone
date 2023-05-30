@@ -98,23 +98,28 @@
                   </div>
 
                   <div class="form-group col-md-6">
+                    <label for="item"><strong>Purchase Date:</strong></label>
+                    <%= data[0].purchase_date %>
+                  </div>
+
+                  <div class="form-group col-md-6">
                     <label for="item"><strong>Condition:</strong></label>
                     <%= data[0].condition %>
                   </div>
 
                   <div class="form-group col-md-6">
                     <label for="quantity"><strong>Quantity:</strong></label>
-                    <%= data[0].qty %>
+                    <%= data[0].item_qty %>
                   </div>
 
                   <div class="form-group col-md-6">
                     <label for="assign"><strong>Assigned to:</strong></label>
-                    <%= data[0].possession %>
+                    <%= data[0].first_name + " " + data[0].last_name %>
                   </div>
 
                   <br>
                   <div class="form-group col-md-6">
-                    <label for="assign"><strong><%= data[0].possession %>'s Contact Details</strong></label>
+                    <label for="assign"><strong><%= data[0].first_name + " " + data[0].last_name %>'s Contact Details</strong></label>
                   </div>
 
                   <div class="form-group col-md-6">
@@ -125,12 +130,38 @@
                     <label for="assign"><strong>Email:</strong></label>
                   </div>
 
+                  <div class="form-group col-md-6">
+                    <label for="assign"><strong>Current Address:</strong></label>
+                    <%
+                    var c_address =  data[0].c_street_line_1
+                    if (data[0].c_street_line_2 !== null){
+                        c_address += ' ' + data[0].c_street_line_2
+                    }
+                    c_address += ', ' + data[0].c_city + ', ' + data[0].c_state + ', ' + data[0].c_postcode
+                    if(data[0].c_country !== null){
+                        c_address += ' ' + data[0].c_country
+                    }%>
+                    <%= c_address %>
+                  </div>
+                  
+                  <div class="form-group col-md-6">
+                    <label for="assign"><strong>Previous Address:</strong></label>
+                    <%
+                    var p_address =  data[0].p_street_line_1
+                    if (data[0].p_street_line_2 !== null){
+                        p_address += ' ' + data[0].p_street_line_2
+                    }
+                    p_address += ', ' + data[0].p_city + ', ' + data[0].p_state + ', ' + data[0].p_postcode
+                    if(data[0].p_country !== null){
+                        p_address += ' ' + data[0].p_country
+                    }%>
+                    <%= c_address %>
+                  </div>                 
+
                   <br>
 
                   <div class="mx-auto col-10 col-md-8 col-lg-6">
-                    <button type="submit" class="btn btn-success text">
-                      <a href="/" style="text-decoration: none; color: white;">Return to Inventory</a>
-                    </button>
+                    <button href="/" style="text-decoration: none; color: white;">Return to Inventory</button>
                   </div>
                 </form>
             </div>
