@@ -26,10 +26,12 @@
 }
 
 .address-radio {
+  /* Do not remove display, change search code instead on live page*/
   display: none;
 }
 
 .address-option {
+  /* Do not remove display, change search code instead on live page*/
   display: none;
 }
 
