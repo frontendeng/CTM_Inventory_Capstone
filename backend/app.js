@@ -195,6 +195,16 @@ async function deleteItem(req){
   }
 }
 
+//signup user
+app.get('/user/completeSignUp', async (req,res) => {
+  res.render('inventory/signup.ejs', { 
+    isAuthenticated: req.oidc.isAuthenticated(),
+    user: req.oidc.user
+  });
+});
+
+
+
 // Start the Server 
 app.listen(port, () => {
   console.log(`CTM Inventory App, listening on port ${port}`);
