@@ -44,7 +44,7 @@ app.get('/', async (req, res) => {
   // Log whether the user is logged in or not
   //console.log(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out')
   res.render('inventory/viewall.ejs', { 
-    data: await getAllItems(req.oidc.user.sub), 
+    data: await getAllItems(), 
     isAuthenticated: req.oidc.isAuthenticated(),
     user: req.oidc.user
   });
@@ -82,14 +82,14 @@ async function getAllItems(){
 // Get one item
 app.get("/inventory/viewone/:id", async(req, res) => {
   res.render('inventory/viewone.ejs', { 
-    data: await getOneItem(),
+    data: await getOneItem(req),
     isAuthenticated: req.oidc.isAuthenticated(),
     user: req.oidc.user
   });
 });
 
 // Get one item function
-async function getOneItem(){
+async function getOneItem(req){
   const { id } = req.params;
   try{
     const getItem = (await pool.query("SELECT item_id, item_desc, category, purchase_date, condition, item_qty, keywords, " +
