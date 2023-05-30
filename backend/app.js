@@ -236,10 +236,10 @@ async function findAddress(req){
     const { addressLine1, addressLine2, city, state, postcode, country } = req.body;
 
     // Query the database to see if the address already exists
-    var doesAddressExist = await pool.query("SELECT * FROM address WHERE street_line_1 = $1 AND street_line_2 = $2 AND city = $3 AND state = $4 AND postcode = $5 AND country = $6", [addressLine1, addressLine2, city, state, postcode, country]).rows;
+    var address = await pool.query("SELECT * FROM address WHERE street_line_1 = $1 AND street_line_2 = $2 AND city = $3 AND state = $4 AND postcode = $5 AND country = $6", [addressLine1, addressLine2, city, state, postcode, country]).rows;
 
     // Return the result of the query
-    return doesAddressExist;
+    return address;
   } catch (err) {
     console.error(err.message);
   }
