@@ -314,6 +314,7 @@ async function completeSignUp(req){
   }
 }
 
+
 // Start the Server 
 app.listen(port, () => {
   console.log(`CTM Inventory App, listening on port ${port}`);
