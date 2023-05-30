@@ -44,7 +44,7 @@ app.get('/', async (req, res) => {
   // Log whether the user is logged in or not
   //console.log(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out')
   res.render('inventory/viewall.ejs', { 
-    data: await getAllItems(), 
+    data: await getAllItems(req.oidc.user.sub), 
     isAuthenticated: req.oidc.isAuthenticated(),
     user: req.oidc.user
   });
@@ -67,11 +67,11 @@ app.get("/inventory/viewall", async(req, res) => {
 async function getAllItems(){
   try{
     const allItems = (await pool.query("SELECT item_id, item_desc, category, purchase_date, condition, item_qty, keywords, " +
-    "u.first_name AS first_name, u.last_name AS last_name, c.street_line_1 AS c_street_line_1, c.street_line_2 AS c_street_line_2, c.city AS c_city," + 
-    "c.state AS c_state, c.country AS c_country, c.postcode AS c_postcode, p.street_line_1 AS p_street_line_," +
-    "p.street_line_2 AS p_street_line_2, p.city AS p_city, p.state AS p_state, p.country AS p_country, p.postcode AS p_postcode," +
-    "FROM inventory AS i JOIN users u ON u.user_id = i.user_id JOIN address c ON c.address_id = i.current_address" +
-    "LEFT JOIN address p ON p.address_id = i.previous_address  ORDER BY item_id;")).rows;
+    " u.first_name AS first_name, u.last_name AS last_name, c.street_line_1 AS c_street_line_1, c.street_line_2 AS c_street_line_2, c.city AS c_city, " + 
+    " c.state AS c_state, c.country AS c_country, c.postcode AS c_postcode, p.street_line_1 AS p_street_line_, " +
+    " p.street_line_2 AS p_street_line_2, p.city AS p_city, p.state AS p_state, p.country AS p_country, p.postcode AS p_postcode " +
+    " FROM inventory AS i JOIN users u ON u.user_id = i.user_id JOIN address c ON c.address_id = i.current_address " +
+    " LEFT JOIN address p ON p.address_id = i.previous_address  ORDER BY item_id;")).rows;
     return allItems;
   } catch (err)
   {
@@ -82,22 +82,22 @@ async function getAllItems(){
 // Get one item
 app.get("/inventory/viewone/:id", async(req, res) => {
   res.render('inventory/viewone.ejs', { 
-    data: await getOneItem(req),
+    data: await getOneItem(),
     isAuthenticated: req.oidc.isAuthenticated(),
     user: req.oidc.user
   });
 });
 
 // Get one item function
-async function getOneItem(req){
+async function getOneItem(){
   const { id } = req.params;
   try{
     const getItem = (await pool.query("SELECT item_id, item_desc, category, purchase_date, condition, item_qty, keywords, " +
-    "u.first_name AS first_name, u.last_name AS last_name, c.street_line_1 AS c_street_line_1, c.street_line_2 AS c_street_line_2, c.city AS c_city," + 
-    "c.state AS c_state, c.country AS c_country, c.postcode AS c_postcode, p.street_line_1 AS p_street_line_," +
-    "p.street_line_2 AS p_street_line_2, p.city AS p_city, p.state AS p_state, p.country AS p_country, p.postcode AS p_postcode," +
-    "FROM inventory AS i JOIN users u ON u.user_id = i.user_id JOIN address c ON c.address_id = i.current_address" +
-    "LEFT JOIN address p ON p.address_id = i.previous_address WHERE i.item_id=$1", [id])).rows;
+    " u.first_name AS first_name, u.last_name AS last_name, c.street_line_1 AS c_street_line_1, c.street_line_2 AS c_street_line_2, c.city AS c_city," + 
+    " c.state AS c_state, c.country AS c_country, c.postcode AS c_postcode, p.street_line_1 AS p_street_line_, " +
+    " p.street_line_2 AS p_street_line_2, p.city AS p_city, p.state AS p_state, p.country AS p_country, p.postcode AS p_postcode " +
+    " FROM inventory AS i JOIN users u ON u.user_id = i.user_id JOIN address c ON c.address_id = i.current_address " +
+    " LEFT JOIN address p ON p.address_id = i.previous_address WHERE i.item_id=$1", [id])).rows;
     //console.log(getItem);
     return getItem;
   } catch (err)
