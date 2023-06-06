@@ -14,6 +14,7 @@
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="stylesheet" href="/styles.css" />
+    <% const zeroPad = (num, places) => String(num).padStart(places, '0');%>
     <title>CTM Equipment Management</title>
 </head>
 
@@ -77,60 +78,57 @@
                 </div>
             </nav>
 
-            <div class="container-fluid px-4">
+            <div class="container mt-5 mx-auto col-10 col-md-8 col-lg-6">
+                    <h3 class="fs-4 mb-3">Edit Equipment</h3>
+                    <form method="POST" onkeydown="return event.key != 'Enter';">
+                      <input type="number" name="id" value="<%= data[0].item_id %>" hidden>
+                      
+                      <div class="form-group col-md-6">
+                        <label for="itemdesc">Item:</label>
+                        <input type="text" id="itemdesc" name="itemdesc" value="<%= data[0].item_desc%>">
+                      </div><br/>
+                      
+                      <div class="form-group col-md-6">
+                        <label for="category">Category:</label>
+                        <input type="text" id="category" name="category"  value="<%= data[0].category%>">
+                      </div><br/>
 
-                <div class="row my-5">
-                    <h3 class="fs-4 mb-3">Edit Equipment Item</h3>
-                    <div class="col">
-                        
-                          
-                        <form method="post" action="/edit_confirm" onkeydown="return event.key != 'Enter';">
-                            <input type="number" name="id" value="<%= data[0].item_id %>" hidden>
-                            <label for="itemdesc">Item:</label><br>
-                            <input type="text" id="itemdesc" name="itemdesc" value="<%= data[0].item_desc%>">
-                            <br>
-                            <br>
-
-                            <label for="category">Category:</label><br>
-                            <input type="text" id="category" name="category"  value="<%= data[0].category%>">
-
-                            <br><br>
-
-                            <label for="purchase_date">Purchase Date:</label><br>
-                            <input type="text" id="purchase_date" name="purchase_date"  value="<%= data[0].purchase_date%>">
-                            
-                            <br><br>
-
-                            <div class="form-group col-md-6">
+                          <div class="mb-3">
+                            <label for="purchase_date">Purchase Date:</label>
+                            <input id="purchase_date" name="purchase_date" class="form-control" type="date" value="<%= `${data[0].purchase_date.getFullYear()}-${zeroPad((data[0].purchase_date.getMonth()+1),2)}-${zeroPad((data[0].purchase_date.getDate()),2)}`%>">
+                          </div>
+                  
+                          <div class="form-group col-md-6">
                               <label for="condition">Condition:</label>
                                <select id="condition" name="condition" class="form-control">
-                                  <option value="" <%= (data[0].condition === "") ? "selected" :%>>Not assigned</option>
-                                  <option value="New" <%= (data[0].condition === "New") ? "selected" :%>>New</option>
-                                  <option value="Used" <%= (data[0].condition === "Used") ? "selected" :%>>Used</option>
-                                  <option value="Broken" <%= (data[0].condition === "Broken") ? "selected" :%>>Broken</option>
+                                  <option value="" <%= (data[0].condition === "") ? "selected" : null %>>Not assigned</option>
+                                  <option value="New" <%= (data[0].condition === "New") ? "selected" : null %>>New</option>
+                                  <option value="Used" <%= (data[0].condition === "Used") ? "selected" : null %>>Used</option>
+                                  <option value="Broken" <%= (data[0].condition === "Broken") ? "selected" : null %>>Broken</option>
                                 </select>
-                            </div>
-                            
-                            <br><br>
+                            </div><br/>
 
-                            <label for="item_qty">Quantity:</label><br>
-                            <input type="text" id="item_qty" name="item_qty"  value="<%= data[0].item_qty%>">
-                            
-                            <br><br>
+                            <div class="form-group col-md-6">
+                              <label for="quantity">Quantity:</label>
+                              <input type="text" class="form-control" id="item_qty" name="item_qty" placeholder="Quantity" value="<%= data[0].item_qty%>">
+                            </div><br/>
 
                             <div class="form-group col-md-6">
                               <label for="user_id">Assigned to:</label>
                                <select id="user_id" name="user_id" class="form-control">
                                 <option value="">Not assigned</option>
                                 <% for(var i = 0; i < users.length; i++){
-                                  var selected = ""
-                                  if (data[0].user_id === users[i].user_id){ selected = "selected"}%>
+                                  var selected = "";
+                                  if (data[0].user_id === users[i].user_id){ selected = "selected"};%>
                                   <option value="<%=users[i].user_id%>" <%= selected %> ><%= users[i].first_name %> <%= users[i].last_name %></option>
                                 <% } %>
                                 </select>
-                            </div>
+                            </div><br/>
 
-                            <div class="form-group col-md-18">
+                             <!-- Add Location Modal -->
+                             <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#address-form" id="address_btn">New Location</button>
+
+                            <div class="form-group mb-3">
                                 <label for="locationAdd" class="form-label">Current Location</label>
                                 <input class="form-control" id="currentLocation-search" placeholder="Type to search..." onkeyup="filterCurrent()">
                                 <div id="currentOptions">
@@ -156,19 +154,8 @@
                                     <% } %>
                                 </div>
                               </div>
-                              
-                                
-                              <div class="form-group col-md-18">
-                                <label for="new-location" class="form-label">Add new location:</label>
-                                    <div class="input-group-append">
-                                      <!-- uncomment to link to a page -->
-                                      <!-- <a href="#" button class="btn btn-outline-success" type="button">Add</button> </a> -->
-                                      <button class="btn btn-outline-success" type="button">Add</button>
-                                    </div>
-            
-                              </div>
                                   
-                              <div class="form-group col-md-18">
+                              <div class="form-group mb-3">
                                   <label for="previousLocation" class="form-label">Previous Location</label>
                                   <input class="form-control" id="previousLocation-search" placeholder="Type to search..." onkeyup="filterPrevious()">
                                   <div id="previousOptions">
@@ -192,20 +179,61 @@
                                       <input type="radio" class="address-radio<%= display%>" name="previous_address" value="<%= address[i].address_id %>" id="p-<%= address[i].address_id %>"  <%= checked %> >
                                       <label class="address-option<%= display%>" for="p-<%= address[i].address_id %>" ><%= addressStr %></label><% } %>
                                   </div>
-                              </div>                                
-                            
-                            <br><br>
+                              </div>       
+
                             <div class="form-group col-md-6">
                               <label for="keywords">Keywords:</label>
-                              <textarea class="form-control" id="keywords" rows="5" placeholder="Enter keywords"><%= data[0].keywords %></textarea>
+                              <textarea class="form-control" id="keywords" rows="5"><%= data[0].keywords %></textarea>
+                              <p class="keywords">Separate keywords with commas</p>
                             </div>
 
-                            <br><br>
-
-                           <div class="mx-auto ">
+                            <div class="mx-auto col-10 col-md-8 col-lg-6">
                             <button type="submit" class="btn btn-success text">Submit</button>
+                            <button type="button" href="/" class="btn btn-secondary">Inventory</button>
 
-                          </form>                   
+                          </form>   
+                          <form class="modal fade" id="address-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" method="POST" onkeydown="return event.key != 'Enter';">
+                            <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="new_address">Add New Location</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" ></button>
+          
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="street_line">Street Line 1:</label>
+                                        <input type="text" class="form-control" id="street_line_1" placeholder="123 Smith st ">
+                                    </div>
+                                    <br>
+                                    <div class="form-group">
+                                      <label for="street_line_2">Street Line 2:</label>
+                                      <input type="text" class="form-control" id="street_line_2" placeholder=" ">
+                                  </div>
+                                  <br>
+          
+                                <div class="form-group">
+                                    <label for="city">City:</label>
+                                    <input type="text" class="form-control" id="city" placeholder="Melbourne" >
+                                  </div>
+                                  <br>
+          
+                                  <div class="form-group">
+                                    <label for="country">Country:</label>
+                                    <input type="text" class="form-control" id="country" placeholder="Australia" >
+                                  </div>
+                                  <br>
+                                  <div class="form-group">
+                                    <label for="postcode">Postcode:</label>
+                                    <input type="text" class="form-control" id="postcode" placeholder="3000" >
+                                  </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Cancel</button>
+                                <button type="submit" class="btn btn-success" formaction="/inventory/add/address">Add</button>
+                                </div>
+                            </div>
+                            </div>
+                        </form>                
                         
                     </div>
                 </div>
@@ -227,15 +255,31 @@
     toggleButton.onclick = function () {
         el.classList.toggle("toggled");
     }; 
-    
-    function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function() {
-          var output = document.getElementById('preview');
-          output.src = reader.result;
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    };
+
+    var modal = document.getElementById("address-form");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("address_btn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on the button, open the modal
+    btn.onclick = function() {
+      modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    } 
 
     function filterCurrent() {
       var input, filter, ul, li, a, i, match;
