@@ -129,6 +129,7 @@
                                         <!-- trash  button-->
                                         <a href="/inventory/delete/<%= data[i].item_id %>" class="link-dark"><i class="fa-solid fa-trash fs-5"></i></a>
                                     </td>
+                                    <td hidden><%= data[i].keywords %></td>
                                   </tr>
                                 <% } }%>
                             </tbody>
@@ -162,16 +163,28 @@
     filter = input.value.toUpperCase();
     list = document.getElementById("item-list");
     tr = list.getElementsByTagName('tr');
+    //hides all elements
+    for (i = 0; i < tr.length; i++) {
+        if(filter != ''){
+        tr[i].style.display = 'none';
+        }
+        else{
+        tr[i].style.display = '';
+        }
+    };
+    if(filter === ''){return;}
 
-    // Loop through all list items, and hide those who don't match the search query
+    // Loop through all list items, and shows those who do match the search query
     for (i = 0; i < tr.length; i++) {
         // Currently searches by item_desc
-        td = tr[i].getElementsByTagName("td")[0];
-        txtValue = td.textContent || td.innerText;
+        row = tr[i].getElementsByTagName("td");
+        console.log(row[1].innerText);
+        for(j = 0; j < row.length; j++){
+        txtValue = row[j].innerText;
+        console.log(filter)
         if (txtValue.toUpperCase().indexOf(filter) > -1) {
         tr[i].style.display = "";
-        } else {
-        tr[i].style.display = "none";
+        } 
         }
     }}
     </script>
