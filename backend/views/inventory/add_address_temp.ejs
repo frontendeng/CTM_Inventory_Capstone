@@ -45,8 +45,10 @@
             <nav class="navbar navbar-expand-lg navbar-light bg-light py-4 px-4">
                 <div class="d-flex align-items-center">
                     <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
-                    <h2 class="fs-2 m-0">User Management</h2>
+                    <h2 class="fs-2 m-0">Dashboard</h2>
                 </div>
+
+                
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -78,57 +80,59 @@
             <!-- Add Equipment page -->
 
              <div class="container mt-5 mx-auto col-10 col-md-8 col-lg-6"> 
-                <h1>Sign Up</h1>
+                <h1>Add Address</h1>
 
-                <form action="/user/completeSignUp" method="POST">
-                                   
-                  <div class="form-group col-md-6">
-                    <label for="firstName">First Name:</label>
-                    <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First Name">
-                  </div>
-
-                  <div class="form-group col-md-6">
-                    <label for="lastName">Last Name:</label>
-                    <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Last Name">
-                  </div>
-
-                  <div class="form-group col-md-6">
-                    <label for="contactNumber">Phone Number:</label>
-                    <input type="number" class="form-control" id="contactNumber" name="contactNumber" placeholder="Phone Number">
+                <form action="/test/add_address" method="POST" onkeydown="return event.key != 'Enter';">
+                  <div class="row">
+                    <!-- <div class="form-group col-md-3">
+                      <label for="id">ID:</label>
+                      <input type="text" class="form-control" id="name" placeholder="Enter ID">
+                    </div> -->
+                    
                   </div>
                   
                   <div class="form-group col-md-6">
-                    <label for="street_line_1">Street Line1:</label>
-                    <input type="text" class="form-control" id="street_line_1" name="street_line_1" placeholder="Street Line1">
+                    <label for="street_line_1">Street Line 1:</label>
+                    <input type="text" class="form-control" id="street_line_1" name="street_line_1" placeholder="Enter Address" >
                   </div>
 
                   <div class="form-group col-md-6">
-                    <label for="street_line_2">Street Line2:</label>
-                    <input type="text" class="form-control" id="street_line_2" name="street_line_2" placeholder="Street Line2">
+                    <label for="street_line_2">Street Line 2:</label>
+                    <input type="text" class="form-control" id="street_line_2" name="street_line_2" placeholder="Enter Address" >
                   </div>
 
                   <div class="form-group col-md-6">
-                    <label for="city">City:</label>
-                    <input type="text" class="form-control" id="city" name="city" placeholder="City">
+                    <label for="postcode">Postcode:</label>
+                    <input type="text" class="form-control" id="postcode" name="postcode" placeholder="Enter Postcode" >
                   </div>
 
                   <div class="form-group col-md-6">
                     <label for="state">State:</label>
-                    <input type="text" class="form-control" id="state" name="state" placeholder="State">
+                     <select id="state" name="state" class="form-control">
+                        <option value="VIC">VIC</option>
+                        <option value="NSW">NSW</option>
+                        <option value="WA">WA</option>
+                        <option value="NT">NT</option>
+                        <option value="QLD">QLD</option>
+                        <option value="SA">SA</option>
+                        <option value="ACT">ACT</option>
+                      </select>
                   </div>
 
                   <div class="form-group col-md-6">
-                    <label for="postcode">Post Code:</label>
-                    <input type="number" class="form-control" id="postcode" name="postcode" placeholder="Post Code">
+                    <label for="city">City:</label>
+                    <input type="text" class="form-control" id="city" name="city" placeholder="Enter City">
                   </div>
 
                   <div class="form-group col-md-6">
                     <label for="country">Country:</label>
-                    <input type="country" class="form-control" id="country" name="country" placeholder="Country">
+                    <input type="text" class="form-control" id="country" name="country" placeholder="Enter Country">
                   </div>
 
+                  <br>
                   <div class="mx-auto col-10 col-md-8 col-lg-6">
                     <button type="submit" class="btn btn-success text">Submit</button>
+                    <button href="/" style="text-decoration: none; color: white;">Inventory</button>
                   </div>
                 </form>
             </div>

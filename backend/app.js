@@ -25,7 +25,7 @@ const config = {
 app.set('view engine', 'ejs');
 app.use(express.static("views"));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 app.use(auth(config));
@@ -41,13 +41,19 @@ const pool = new Pool({
 });
 
 app.get('/', async (req, res) => {
-  // Log whether the user is logged in or not
-  //console.log(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out')
-  res.render('inventory/viewall.ejs', { 
-    data: await getAllItems(), 
-    isAuthenticated: req.oidc.isAuthenticated(),
-    user: req.oidc.user
-  });
+  // console.log(req.oidc.user)
+  var userCompletedSignUp = await hasUserCompletedSignUp(req)
+  
+  // If user has not completed sign up process redirect them to the complete sign up page, otherwise show them the home page
+  if (userCompletedSignUp == false) {
+    res.redirect('user/complete_signup')
+  } else {
+    res.render('inventory/viewall.ejs', { 
+      data: await getAllItems(), 
+      isAuthenticated: req.oidc.isAuthenticated(),
+      user: req.oidc.user
+    });
+  }
 });
 
 // The /profile route will show the user profile as JSON
@@ -216,30 +222,25 @@ async function deleteItem(req){
   }
 }
 
-app.get('/user/completeSignUp', async (req, res) => {
-  res.render('user/completeSignUp.ejs', { 
-    isAuthenticated: req.oidc.isAuthenticated(),
-    user: req.oidc.user
-  })
-})
-
-app.post('/user/completeSignUp', async (req, res) => {
-  await completeSignUp(req);
-  
-  res.redirect('/');
-})
 
 // Find address in database
-async function findAddress(req){
+async function findAddress(address){
   try {
     // Destructure the address data from the request body
-    const { addressLine1, addressLine2, city, state, postcode, country } = req.body;
-
+    var { street_line_1, street_line_2, city, state, postcode, country } = address;
+    
     // Query the database to see if the address already exists
-    var address = await pool.query("SELECT * FROM address WHERE street_line_1 = $1 AND street_line_2 = $2 AND city = $3 AND state = $4 AND postcode = $5 AND country = $6", [addressLine1, addressLine2, city, state, postcode, country]).rows;
+    var address = await pool.query(`SELECT * FROM "address" WHERE street_line_1 = '${street_line_1}' AND street_line_2 = '${street_line_2}' AND city = '${city}' AND state = '${state}' AND postcode = '${postcode}' AND country = '${country}'`);
+    address = address.rows[0];
 
-    // Return the result of the query
-    return address;
+    console.log("Checking if address exists")
+    if(address == undefined){
+      console.log(`Address does not exist`)
+      return false
+    } else {
+      console.log(`Address already exists in database`)
+      return address
+    }
   } catch (err) {
     console.error(err.message);
   }
@@ -249,31 +250,27 @@ async function findAddress(req){
 async function addAddress(req){
   try{
     // Destructure the address data from the request body
-    const { addressLine1, addressLine2, city, state, postcode, country } = req.body;
-
+    const { street_line_1, street_line_2, city, state, postcode, country } = req.body;
+    
     // Create a new address object
     const newAddress = {
-      street_line_1: addressLine1,
-      street_line_2: addressLine2,
+      //address_id: 1,
+      street_line_1: street_line_1,
+      street_line_2: street_line_2,
       city: city,
       state: state,
-      postcode: postcode,
-      country: country
+      country: country,
+      postcode: postcode
     }
-
-    // May need to init doesAddressExist to null
-    // var doesAddressExist = null;
-
+    
     // Query the database to see if the address already exists
-    var doesAddressExist = await findAddress(req);
-
+    var doesAddressExist = await findAddress(newAddress);
+    
     // If the address already exists, do not add it to the database
-    if(newAddress == doesAddressExist[0]){
-      console.log(`Address already exists`)
-    } else {
+    if(!doesAddressExist){
       console.log(`Adding new address`)
       try {
-        const addAddress = await pool.query("INSERT INTO inventory (street_line_1, street_line_2, city, state, postcode, country) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [addressLine1, addressLine2, city, state, postcode, country]);
+        const addAddress = await pool.query("INSERT INTO address (street_line_1, street_line_2, city, state, postcode, country) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [street_line_1, street_line_2, city, state, postcode, country]);
         console.log(`Address added to database`)
       } catch (err) {
         console.error(err.message)
@@ -289,15 +286,16 @@ async function hasUserCompletedSignUp(req){
   try {
     // Get the user id from the request
     const userId = req.oidc.user.sub;
-
+    
     // May need to init signUpComplete to null
-    // var signUpComplete = null;
-
+    var signUpComplete = null;
+    
     // Query the database to see if the user already exists in the users table
-    var signUpComplete = await pool.query("SELECT * FROM users WHERE user_id = $1", [userId]).rows;
+    var signUpComplete = await pool.query("SELECT * FROM users WHERE user_id = $1", [userId]);
+    signUpComplete = signUpComplete.rows
 
     // If the user already exists, they have completed sign up
-    if(userId == signUpComplete[0].user_id){
+    if(signUpComplete.length == 1){
       console.log(`User has already completed sign up`)
       return true;
     } else {
@@ -314,27 +312,57 @@ async function hasUserCompletedSignUp(req){
 async function completeSignUp(req){
   // Add the users address to the database
   await addAddress(req);
-
+  
   // Find the address id of the address that was just added
-  const addressId = await findAddress(req);
-
+  console.log("Finding address for user")
+  const address = await findAddress(req.body);
+  addressId = address.address_id;
+  
   // Create a new user object
   const completedUser = {
     user_id: req.oidc.user.sub,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    contactNumber: req.body.contactNumber,
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    contact_no: req.body.contact_no,
     address_id: addressId,
   }
-
+  
   // Add the user to the database
   try {
-    const addCompletedUser = await pool.query("INSERT INTO users (user_id, firstName, lastName, contactNumber, address_id) VALUES ($1, $2, $3, $4, $5) RETURNING *", [completedUser.user_id, completedUser.firstName, completedUser.lastName, completedUser.contactNumber, completedUser.address_id]);
+    const addCompletedUser = await pool.query("INSERT INTO users (user_id, first_name, last_name, contact_no, address_id) VALUES ($1, $2, $3, $4, $5) RETURNING *", [completedUser.user_id, completedUser.first_name, completedUser.last_name, completedUser.contact_no, completedUser.address_id]);
+
+    console.log(`User added to database`)
   } catch (err) {
-    console.err(err.message);
+    console.error(err.message);
   }
 }
 
+app.get('/user/complete_signup', async (req, res) => {
+  res.render('inventory/complete_signup.ejs', { 
+    isAuthenticated: req.oidc.isAuthenticated(),
+    user: req.oidc.user
+  })
+})
+
+app.post('/user/complete_signup', async (req, res) => {
+  await completeSignUp(req);
+  
+  res.redirect('/');
+})
+
+
+app.get('/test/add_address', async (req, res) => {
+  res.render('inventory/add_address_temp.ejs', { 
+    isAuthenticated: req.oidc.isAuthenticated(),
+    user: req.oidc.user
+  })
+})
+
+app.post('/test/add_address', async (req, res) => {
+  //console.log(req.body)
+  await addAddress(req);
+  res.redirect('/');
+});
 
 // Start the Server 
 app.listen(port, () => {
