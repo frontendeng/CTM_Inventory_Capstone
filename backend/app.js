@@ -363,6 +363,111 @@ app.post('/test/add_address', async (req, res) => {
   res.redirect('/');
 });
 
+=======
+//users
+app.get('/users', async (req, res) => {
+  // Log whether the user is logged in or not
+  //console.log(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out')
+  res.render('users/administer_users.ejs', { 
+    data: await getAllUsers(), 
+    isAuthenticated: req.oidc.isAuthenticated(),
+    user: req.oidc.user
+  });
+});
+
+// Get all users
+app.get("/users/viewall_users", async(req, res) => {
+  res.render('users/viewall_users.ejs', { 
+    data: await getAllUsers(),
+    //isAuthenticated: req.oidc.isAuthenticated(),
+    //user: req.oidc.user 
+  });
+});
+
+// Get all users function
+async function getAllUsers(){
+  try{
+    const allUsers = (await pool.query("SELECT * FROM users")).rows;
+    return allUsers;
+  } catch (err)
+  {
+    console.error(err.message) 
+  }
+}
+
+// Get one user
+app.get("/users/viewone_user/:id", async(req, res) => {
+  res.render('users/viewone_user.ejs', { 
+    data: await getOneUser(req),
+    isAuthenticated: req.oidc.isAuthenticated(),
+    user: req.oidc.user
+  });
+});
+
+// Get one user function
+async function getOneUser(req){
+  const { id } = req.params;
+  try{
+    const getUser = (await pool.query("SELECT * FROM users WHERE user_id=$1", [id])).rows;
+    //console.log(getUser);
+    return getUser;
+  } catch (err)
+  {
+    console.error(err.message) 
+  }
+}
+
+//edit user
+app.get('/users/edit_user/:id', async (req, res) => {
+  res.render('users/edit_user.ejs', { 
+    data: await getOneUser(req),
+    isAuthenticated: req.oidc.isAuthenticated(),
+    user: req.oidc.user, 
+  });
+});
+
+app.post('/edit_user', isAdmin, async (req, res) => {
+  var body = req.body;
+  console.log(req.body); 
+  await editUser(body.id, body.username, body.role, body.address, body.phonenumber);
+  res.redirect('/users/viewall_users');
+});
+
+async function editUser(id, userName, role, address, phoneNumber){
+  var userData = [];
+  try{
+    userData =  (await pool.query(`UPDATE users SET user_name = '${userName}', role = '${role}', address = '${address}', phone_number = ${phoneNumber} WHERE user_id = ${id};` )).rows;}
+  catch(e){
+    throw e;
+  }
+  return userData;
+}
+
+// Delete an user
+app.get('/users/delete_user/:id', async (req, res) => {
+  res.render('users/delete_user.ejs', { 
+    data: await getOneUser(req),
+    isAuthenticated: req.oidc.isAuthenticated(),
+    user: req.oidc.user
+  });
+});
+
+app.post('/delete_user', isAdmin, async (req, res) => {
+  await deleteUser(req)
+  res.redirect('/users/viewall_users');
+});
+
+async function deleteUser(req){
+  try{
+    const id = req.body.id; 
+    const deleteUser = await pool.query("DELETE FROM users WHERE user_id=$1", [id]);
+    } catch (err)
+  {
+    console.error(err.message) 
+  }
+}
+
+
 // Start the Server 
 app.listen(port, () => {
   console.log(`CTM Inventory App, listening on port ${port}`);
