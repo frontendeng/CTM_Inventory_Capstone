@@ -429,14 +429,14 @@ app.get('/users/edit_user/:id', async (req, res) => {
 app.post('/edit_user', isAdmin, async (req, res) => {
   var body = req.body;
   console.log(req.body); 
-  await editUser(body.id, body.username, body.role, body.address, body.phonenumber);
+  await editUser(body.id, body.firstname, body.lastname, body.address, body.phonenumber);
   res.redirect('/users/viewall_users');
 });
 
-async function editUser(id, userName, role, address, phoneNumber){
+async function editUser(id, firstName, lastName, address, phoneNumber){
   var userData = [];
   try{
-    userData =  (await pool.query(`UPDATE users SET user_name = '${userName}', role = '${role}', address = '${address}', phone_number = ${phoneNumber} WHERE user_id = ${id};` )).rows;}
+    userData =  (await pool.query(`UPDATE users SET first_name = '${firstName}', last_name = '${lastName}', address = '${address}', contact_no = ${phoneNumber} WHERE user_id = ${id};` )).rows;}
   catch(e){
     throw e;
   }
