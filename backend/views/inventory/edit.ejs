@@ -80,12 +80,12 @@
 
             <div class="container mt-5 mx-auto col-10 col-md-8 col-lg-6">
                     <h3 class="fs-4 mb-3">Edit Equipment</h3>
-                    <form method="POST" onkeydown="return event.key != 'Enter';">
-                      <input type="number" name="id" value="<%= data[0].item_id %>" hidden>
+                    <form action="/inventoy/edit/<%= data[0].item_id%>" method="POST" onkeydown="return event.key != 'Enter';">
+                      <input type="hidden" name="item_id" value="<%= data[0].item_id %>">
                       
                       <div class="form-group col-md-6">
                         <label for="itemdesc">Item:</label>
-                        <input type="text" id="itemdesc" name="itemdesc" value="<%= data[0].item_desc%>">
+                        <input type="text" id="item_desc" name="item_desc" value="<%= data[0].item_desc%>">
                       </div><br/>
                       
                       <div class="form-group col-md-6">
@@ -95,7 +95,7 @@
 
                           <div class="mb-3">
                             <label for="purchase_date">Purchase Date:</label>
-                            <input id="purchase_date" name="purchase_date" class="form-control" type="date" value="<%= `${data[0].purchase_date.getFullYear()}-${zeroPad((data[0].purchase_date.getMonth()+1),2)}-${zeroPad((data[0].purchase_date.getDate()),2)}`%>">
+                            <input id="purchase_date" name="purchase_date" class="form-control" type="date" value="<%= ((typeof data[0].purchase_date) === 'object') ? `${data[0].purchase_date.getFullYear()}-${zeroPad((data[0].purchase_date.getMonth()+1),2)}-${zeroPad((data[0].purchase_date.getDate()),2)}` : data[0].purchase_date %>">
                           </div>
                   
                           <div class="form-group col-md-6">
@@ -126,7 +126,7 @@
                             </div><br/>
 
                              <!-- Add Location Modal -->
-                             <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#address-form" id="address_btn">New Location</button>
+                             <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#address-form" id="address_btn" onclick="saveData()">New Location</button>
 
                             <div class="form-group mb-3">
                                 <label for="locationAdd" class="form-label">Current Location</label>
@@ -200,36 +200,52 @@
                                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" ></button>
           
                                 </div>
+                                <input type="hidden" name="itme_id_re" id="item_id_re" value="<%= data[0].item_id %>">
+                                <input type="hidden" name="item_desc_re" id="item_desc_re">
+                                <input type="hidden" name="category_re" id="category_re">
+                                <input type="hidden" name="purchase_date_re" id="purchase_date_re">
+                                <input type="hidden" name="condition_re" id="condition_re">
+                                <input type="hidden" name="item_qty_re" id="item_qty_re">
+                                <input type="hidden" name="user_id_re" id="user_id_re">
+                                <input type="hidden" name="current_address_re" id="current_address_re">
+                                <input type="hidden" name="previous_address_re" id="previous_address_re">
+                                <input type="hidden" name="keywords_re" id="keywords_re">
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <label for="street_line">Street Line 1:</label>
-                                        <input type="text" class="form-control" id="street_line_1" placeholder="123 Smith st ">
+                                        <input type="text" class="form-control" name="street_line_1" id="street_line_1" placeholder="123 Smith st ">
                                     </div>
                                     <br>
                                     <div class="form-group">
                                       <label for="street_line_2">Street Line 2:</label>
-                                      <input type="text" class="form-control" id="street_line_2" placeholder=" ">
+                                      <input type="text" class="form-control" name="street_line_2" id="street_line_2" placeholder=" ">
                                   </div>
                                   <br>
           
                                 <div class="form-group">
                                     <label for="city">City:</label>
-                                    <input type="text" class="form-control" id="city" placeholder="Melbourne" >
+                                    <input type="text" class="form-control" name="city" id="city" placeholder="Melbourne" >
+                                  </div>
+                                  <br>
+
+                                <div class="form-group">
+                                    <label for="city">State:</label>
+                                    <input type="text" class="form-control" name="state" id="state" placeholder="Vic" >
                                   </div>
                                   <br>
           
                                   <div class="form-group">
                                     <label for="country">Country:</label>
-                                    <input type="text" class="form-control" id="country" placeholder="Australia" >
+                                    <input type="text" class="form-control" name="country" id="country" placeholder="Australia" >
                                   </div>
                                   <br>
                                   <div class="form-group">
                                     <label for="postcode">Postcode:</label>
-                                    <input type="text" class="form-control" id="postcode" placeholder="3000" >
+                                    <input type="text" class="form-control" name="postcode" id="postcode" placeholder="3000" >
                                   </div>
                                 <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Cancel</button>
-                                <button type="submit" class="btn btn-success" formaction="/inventory/add/address">Add</button>
+                                <button type="submit" class="btn btn-success" formaction="/inventory/edit/<%= data[0].item_id %>/address">Add</button>
                                 </div>
                             </div>
                             </div>
@@ -267,6 +283,33 @@
     // When the user clicks on the button, open the modal
     btn.onclick = function() {
       modal.style.display = "block";
+      document.getElementById("item_desc_re").value = document.getElementById("item_desc").value;
+      document.getElementById("category_re").value = document.getElementById("category").value || '';
+      document.getElementById("purchase_date_re").value = document.getElementById("purchase_date").value || '';
+      document.getElementById("condition_re").value = document.getElementById("condition").value || '';
+      document.getElementById("item_qty_re").value = document.getElementById("item_qty").value || '';
+      document.getElementById("user_id_re").value = document.getElementById("user_id").value || '';
+      var current_address = '';
+      var c_add = document.getElementById("currentOptions");
+      var c_radio = div.getElementsByTagName("input");
+      for (i = 0; i < c_radio.length; i++) {
+        if(c_radio[i].ischecked){
+          current_address = c_radio[i].value;
+          break;
+        }
+      }
+      var previous_address = '';
+      var p_add = document.getElementById("previousOptions");
+      var p_radio = div.getElementsByTagName("input");
+      for (i = 0; i < p_radio.length; i++) {
+        if(p_radio[i].ischecked){
+          previous_address = p_radio[i].value;
+          break;
+        }
+      }
+      document.getElementById("current_address_re").value = current_address;
+      document.getElementById("previous_address_re").value = previous_address;
+      document.getElementById("keywords_re").value = document.getElementById("keywords").value || '';
     }
 
     // When the user clicks on <span> (x), close the modal
@@ -280,6 +323,7 @@
         modal.style.display = "none";
       }
     } 
+
 
     function filterCurrent() {
       var input, filter, ul, li, a, i, match;
