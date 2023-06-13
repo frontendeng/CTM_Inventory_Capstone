@@ -349,6 +349,34 @@ app.post('/user/complete_signup', async (req, res) => {
   res.redirect('/');
 })
 
+app.post('/inventory/add/address', async (req, res) => {
+  await addAddress(req);
+  console.log(req.body);
+  const {item_desc_re, category_re, purchase_date_re, condition_re, item_qty_re, user_id_re, current_address_re, previous_address_re, keywords_re} = req.body;
+  var data = [{item_desc: item_desc_re, category: category_re, purchase_date: purchase_date_re || '', condition: condition_re, item_qty: item_qty_re, user_id: user_id_re, current_address: current_address_re, previous_address: previous_address_re, keywords: keywords_re}]
+  console.log(data);
+  res.render('inventory/add.ejs', {
+    data: data,
+    isAuthenticated: req.oidc.isAuthenticated(),
+    user: req.oidc.user,
+    address: await getAllAddresses(),
+    users: await getAllUsers()
+  })
+})
+
+app.post('/inventory/edit/:id/address', async (req, res) => {
+  await addAddress(req);
+  const {item_id_re, item_desc_re, category_re, purchase_date_re, condition_re, item_qty_re, user_id_re, current_address_re, previous_address_re, keywords_re} = req.body;
+  var data = [{item_id: item_id_re, item_desc: item_desc_re, category: category_re, purchase_date: purchase_date_re || '', condition: condition_re, item_qty: item_qty_re, user_id: user_id_re, current_address: current_address_re, previous_address: previous_address_re, keywords: keywords_re}]
+  console.log(data);
+  res.render('inventory/edit.ejs', { 
+    data: data,
+    isAuthenticated: req.oidc.isAuthenticated(),
+    user: req.oidc.user, 
+    address: await getAllAddresses(),
+    users: await getAllUsers()
+  });
+});
 
 app.get('/test/add_address', async (req, res) => {
   res.render('inventory/add_address_temp.ejs', { 
@@ -363,7 +391,6 @@ app.post('/test/add_address', async (req, res) => {
   res.redirect('/');
 });
 
-=======
 //users
 app.get('/users', async (req, res) => {
   // Log whether the user is logged in or not
