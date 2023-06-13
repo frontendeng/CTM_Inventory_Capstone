@@ -1,4 +1,5 @@
 const express = require('express');
+const ejsLayouts = require("express-ejs-layouts");
 const axios = require("axios").default;
 const { Pool } = require('pg');
 const app = express();
@@ -26,6 +27,7 @@ app.set('view engine', 'ejs');
 app.use(express.static("views"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(ejsLayouts);
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 app.use(auth(config));
