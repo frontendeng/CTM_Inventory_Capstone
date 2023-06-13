@@ -1,40 +1,4 @@
-        <!-- Page Content -->
-        <% const zeroPad = (num, places) => String(num).padStart(places, '0');%>
-        <div id="page-content-wrapper">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light py-4 px-4">
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
-                    <h2 class="fs-2 m-0">Dashboard</h2>
-                </div>
 
-                
-
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item dropdown">
-                            <% if(!isAuthenticated) { %>
-                                <a class="nav-link second-text fw-bold" href="/login">Login</a>
-                            <% } else { %>
-                                <a class="nav-link dropdown-toggle second-text fw-bold" href="#" id="navbarDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-user me-2"></i>
-                                    <%= user.nickname %>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                                    <li><a class="dropdown-item" href="/logout">Logout</a></li>
-                                </ul>
-                            <% } %> 
-                        </li>
-                    </ul>
-                </div>
-            </nav>
 
             <div class="container mt-5 mx-auto col-10 col-md-8 col-lg-6">
                     <h3 class="fs-4 mb-3">Edit Equipment</h3>
@@ -368,3 +332,5 @@
 </body>
 
 </html>
+<%- contentFor('title') %> 
+Inventory Management
