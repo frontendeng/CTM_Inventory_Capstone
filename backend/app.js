@@ -1,4 +1,5 @@
 const express = require('express');
+const ejsLayouts = require("express-ejs-layouts");
 const axios = require("axios").default;
 const { Pool } = require('pg');
 const app = express();
@@ -26,6 +27,7 @@ app.set('view engine', 'ejs');
 app.use(express.static("views"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(ejsLayouts);
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 app.use(auth(config));
@@ -349,6 +351,34 @@ app.post('/user/complete_signup', async (req, res) => {
   res.redirect('/');
 })
 
+app.post('/inventory/add/address', async (req, res) => {
+  await addAddress(req);
+  console.log(req.body);
+  const {item_desc_re, category_re, purchase_date_re, condition_re, item_qty_re, user_id_re, current_address_re, previous_address_re, keywords_re} = req.body;
+  var data = [{item_desc: item_desc_re, category: category_re, purchase_date: purchase_date_re || '', condition: condition_re, item_qty: item_qty_re, user_id: user_id_re, current_address: current_address_re, previous_address: previous_address_re, keywords: keywords_re}]
+  console.log(data);
+  res.render('inventory/add.ejs', {
+    data: data,
+    isAuthenticated: req.oidc.isAuthenticated(),
+    user: req.oidc.user,
+    address: await getAllAddresses(),
+    users: await getAllUsers()
+  })
+})
+
+app.post('/inventory/edit/:id/address', async (req, res) => {
+  await addAddress(req);
+  const {item_id_re, item_desc_re, category_re, purchase_date_re, condition_re, item_qty_re, user_id_re, current_address_re, previous_address_re, keywords_re} = req.body;
+  var data = [{item_id: item_id_re, item_desc: item_desc_re, category: category_re, purchase_date: purchase_date_re || '', condition: condition_re, item_qty: item_qty_re, user_id: user_id_re, current_address: current_address_re, previous_address: previous_address_re, keywords: keywords_re}]
+  console.log(data);
+  res.render('inventory/edit.ejs', { 
+    data: data,
+    isAuthenticated: req.oidc.isAuthenticated(),
+    user: req.oidc.user, 
+    address: await getAllAddresses(),
+    users: await getAllUsers()
+  });
+});
 
 app.get('/test/add_address', async (req, res) => {
   res.render('inventory/add_address_temp.ejs', { 
@@ -428,6 +458,7 @@ app.get('/users/edit_user/:id', async (req, res) => {
 app.post('/edit_user', isAdmin, async (req, res) => {
   var body = req.body;
   console.log(req.body); 
+
   await editUser(body.id, body.firstname, body.lastname, body.phonenumber);
   res.redirect('/users/viewall_users');
 });
@@ -436,6 +467,7 @@ async function editUser(id, firstName, lastName, phoneNumber){
   var userData = [];
   try{
     userData =  (await pool.query(`UPDATE users SET first_name = '${firstName}', last_name = '${lastName}', contact_no = ${phoneNumber} WHERE user_id = ${id};` )).rows;}
+
   catch(e){
     throw e;
   }

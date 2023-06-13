@@ -1,0 +1,4 @@
+item_id,item_desc,category,purchase_date,condition,item_qty,user_id,current_address,previous_address,keywords
+1,Television,Electronic,2023-01-06,New,3,auth0|64506419f56d064ae58a5b91,1,,"TV, Electronics, Display"
+3,Television,Electronic,2023-06-01,New,3,auth0|64506419f56d064ae58a5b91,1,2,"TV, Electronics"
+4,Foldable Table,Furniture,2023-05-09,New,5,auth0|64506419f56d064ae58a5b91,2,,"Plastic, Beige"
