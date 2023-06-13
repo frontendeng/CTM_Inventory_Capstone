@@ -408,8 +408,8 @@ app.get('/users', async (req, res) => {
 app.get("/users/viewall_users", async(req, res) => {
   res.render('users/viewall_users.ejs', { 
     data: await getAllUsers(),
-    //isAuthenticated: req.oidc.isAuthenticated(),
-    //user: req.oidc.user 
+    isAuthenticated: req.oidc.isAuthenticated(),
+    user: req.oidc.user 
   });
 });
 
